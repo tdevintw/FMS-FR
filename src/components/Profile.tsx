@@ -1,197 +1,107 @@
-import React, { useState, FormEvent } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
-import axios from 'axios';
+import React, {useState, useEffect} from 'react';
+import {useUser} from '../context/UserContext';
 
-interface ProfileFormData {
-    username: string;
-    currentPassword: string;
-    newPassword?: string;
-    confirmNewPassword?: string;
-}
-
-const Profile: React.FC = () => {
-    const { user, logout } = useAuth();
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState<ProfileFormData>({
-        username: user?.username || '',
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: ''
+export const ProfileForm: React.FC = () => {
+    const {user, updateUser} = useUser();
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        role: '',
     });
-    const [error, setError] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    if (!user) {
-        return <Navigate to="/login" replace />;
-    }
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                username: user.username,
+                email: user.email,
+                password: '',
+                role: user.role,
+            });
+        }
+    }, [user]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
         }));
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
-        setSuccessMessage(null);
+        setError('');
+        setSuccess('');
 
-        // Validate input
-        if (formData.newPassword && formData.newPassword !== formData.confirmNewPassword) {
-            setError("New passwords do not match");
-            return;
-        }
-
-            const updatePayload = {
+        try {
+            await updateUser({
                 username: formData.username,
-                ...(formData.newPassword ? { newPassword: formData.newPassword } : {}),
-                currentPassword: formData.currentPassword
-            };
-
-            await axios.put('/api/user/profile', updatePayload, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+                ...(formData.password && {password: formData.password}), // Only include password if it's not empty
             });
 
-            setSuccessMessage("Profile updated successfully");
-            setIsEditing(false);
-
-    };
-
-    const handleDeleteAccount = async () => {
-        const confirmDelete = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
-
-        if (confirmDelete) {
-                await axios.delete('/api/user/profile', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                logout(); // Clear authentication and redirect to login
-
+            setSuccess('Profile updated successfully.');
+        } catch (err) {
+            setError('Failed to update profile. Please try again.');
+            console.error(err);
         }
     };
-
     return (
-        <div className="profile-container">
-            <h1>User Profile</h1>
-
+        <form className="profile-form" onSubmit={handleSubmit}>
             {error && <div className="error-message">{error}</div>}
-            {successMessage && <div className="success-message">{successMessage}</div>}
+            {success && <div className="success-message">{success}</div>}
 
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        value={user.email}
-                        disabled
-                        className="form-control"
-                    />
-                </div>
+            <div className="form-group">
+                <label htmlFor="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                />
+            </div>
 
-                <div className="form-group">
-                    <label>Role</label>
-                    <input
-                        type="text"
-                        value={user.role}
-                        disabled
-                        className="form-control"
-                    />
-                </div>
+            <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    disabled
+                />
+            </div>
 
-                <div className="form-group">
-                    <label>Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="form-control"
-                    />
-                </div>
+            <div className="form-group">
+                <label htmlFor="role">Role</label>
+                <input
+                    type="text"
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    disabled
+                />
+            </div>
 
-                {isEditing && (
-                    <>
-                        <div className="form-group">
-                            <label>Current Password (Required to make changes)</label>
-                            <input
-                                type="password"
-                                name="currentPassword"
-                                value={formData.currentPassword}
-                                onChange={handleInputChange}
-                                className="form-control"
-                                required
-                            />
-                        </div>
+            <div className="form-group">
+                <label htmlFor="password">New Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter new password"
+                />
+            </div>
 
-                        <div className="form-group">
-                            <label>New Password (Optional)</label>
-                            <input
-                                type="password"
-                                name="newPassword"
-                                value={formData.newPassword}
-                                onChange={handleInputChange}
-                                className="form-control"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Confirm New Password</label>
-                            <input
-                                type="password"
-                                name="confirmNewPassword"
-                                value={formData.confirmNewPassword}
-                                onChange={handleInputChange}
-                                className="form-control"
-                            />
-                        </div>
-                    </>
-                )}
-
-                <div className="profile-actions">
-                    {!isEditing ? (
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={() => setIsEditing(true)}
-                        >
-                            Edit Profile
-                        </button>
-                    ) : (
-                        <>
-                            <button
-                                type="submit"
-                                className="btn btn-success"
-                            >
-                                Save Changes
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={() => setIsEditing(false)}
-                            >
-                                Cancel
-                            </button>
-                        </>
-                    )}
-
-                    <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={handleDeleteAccount}
-                    >
-                        Delete Account
-                    </button>
-                </div>
-            </form>
-        </div>
+            <button type="submit" className="profile-button">
+                Update Profile
+            </button>
+        </form>
     );
 };
-
-export default Profile;

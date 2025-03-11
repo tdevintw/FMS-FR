@@ -47,6 +47,9 @@ export const authService = {
         });
 
         if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Email not found');
+            }
             throw new Error('Failed to send reset password email');
         }
     },
@@ -54,14 +57,12 @@ export const authService = {
         const response = await fetch(`http://localhost:9999/api/auth/reset-password?token=${encodeURIComponent(token)}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ newPassword }),
+            body: JSON.stringify({ newPassword }) // Ensure correct JSON body format
         });
-
+        console.log(JSON.stringify({ newPassword }))
         if (!response.ok) {
             throw new Error('Failed to reset password');
         }
-
-        return response.text(); // Response message
     },
 
 

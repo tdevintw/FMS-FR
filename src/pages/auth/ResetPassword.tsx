@@ -1,11 +1,13 @@
 import React from 'react';
-import { useParams } from 'react-router-dom'; // Import useParams to get the token from URL
+import { useLocation } from 'react-router-dom'; // Import useLocation
 import { ResetPasswordForm } from '../../components/auth/ResetPassword';
 import Navbar from "../../components/Navbar";
 import '../../style/resetPassword.css';
 
 const ResetPasswordPage: React.FC = () => {
-    const { token } = useParams<{ token: string }>(); // Extract token from URL
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get('token'); // Extract token from query parameters
 
     if (!token) {
         return <div className="error-message">Invalid or missing reset password token.</div>;

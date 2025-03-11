@@ -17,12 +17,18 @@ export const ForgotPasswordForm: React.FC = () => {
             setMessage('A password reset link has been sent to your email.');
         } catch (err) {
             console.error('Error in forgot password:', err);
-            setError('Failed to send reset email. Please try again.');
+
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to send reset email. Please try again.');
+            }
         }
     };
 
+
     return (
-        <form className="reset-password-form" onSubmit={handleSubmit}>
+        <form className="forget-password-form" onSubmit={handleSubmit}>
 
             <div className="form-group">
                 <label htmlFor="email">Email</label>

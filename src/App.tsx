@@ -1,13 +1,14 @@
-import React, {JSX} from "react";
+import React, { JSX } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { UserProvider } from "./context/UserContext";
 
 import LoginPage from "./pages/auth/Login.tsx";
 import RegisterPage from "./pages/auth/Register.tsx";
 import ProfilePage from "./pages/profile.tsx";
 import ForgetPasswordPage from "./pages/auth/ForgetPassword.tsx";
-import "./App.css";
 import ResetPasswordPage from "./pages/auth/ResetPassword.tsx";
+import "./App.css";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
     const { user } = useAuth();
@@ -29,9 +30,16 @@ const App: React.FC = () => {
                         <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
                         <Route path="/register" element={<PublicRoute element={<RegisterPage />} />} />
                         <Route path="/forget-password" element={<PublicRoute element={<ForgetPasswordPage />} />} />
-                        <Route path="/reset-password/:token" element={<PublicRoute element={<ResetPasswordPage />} />} />
+                        <Route path="/reset-password" element={<PublicRoute element={<ResetPasswordPage />} />} />
 
-                        <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
+                        {/* Protected Route - Wrap with UserProvider */}
+                        <Route path="/profile" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <ProfilePage />
+                                </UserProvider>
+                            } />
+                        } />
 
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
