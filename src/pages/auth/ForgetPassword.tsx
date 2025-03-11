@@ -1,15 +1,15 @@
 import React from 'react';
-import {ForgotPasswordForm} from '../../components/auth/forgetPassword';
+import {ForgotPasswordForm} from '../../components/auth/ForgetPassword.tsx';
 import Navbar from "../../components/Navbar";
 import '../../style/forgetPassword.css';
 
 const ForgetPasswordPage: React.FC = () => {
     return (
-        <div className="forgot-password-page">
+        <div className="forget-password-page">
             <Navbar/>
 
-            <div className="forgot-password-page-container">
-                <div className="forgot-password-container">
+            <div className="forget-password-page-container">
+                <div className="forget-password-container">
                     <ForgotPasswordForm/>
                 </div>
             </div>

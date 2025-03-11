@@ -23,8 +23,6 @@ export const ForgotPasswordForm: React.FC = () => {
 
     return (
         <form className="reset-password-form" onSubmit={handleSubmit}>
-            {message && <div className="success-message">{message}</div>}
-            {error && <div className="error-message">{error}</div>}
 
             <div className="form-group">
                 <label htmlFor="email">Email</label>
@@ -37,10 +35,14 @@ export const ForgotPasswordForm: React.FC = () => {
                     required
                 />
             </div>
+            {message && <div className="success-message">{message}</div>}
+            {error && <div className="error-message">{error}</div>}
 
             <button type="submit" className="forget-password-button">
                 Reset Password
             </button>
+
         </form>
-    );
+
+);
 };

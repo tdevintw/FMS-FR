@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 
 export const LoginForm: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -51,10 +51,10 @@ export const LoginForm: React.FC = () => {
                 Login
             </button>
             <p>
-                Don't have an account? <a className={"register-redirect"} href="/register">Register</a>
+                Don't have an account? <Link to="/register" className="register-redirect">Register</Link>
             </p>
             <p className={"forgot-password-p"}>
-                 <a className={ "forgot-password"} href="/register"> Forgot  Password ?</a>
+                <Link to="/forget-password" className="forgot-password">Forgot  Password ?</Link>
             </p>
         </form>
     );

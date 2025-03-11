@@ -15,6 +15,8 @@ interface AuthContextType {
     register: (username: string, email: string, password: string, role: string) => Promise<void>;
     logout: () => void;
     forgotPassword: (email: string) => Promise<void>;
+    resetPassword: (token: string, newPassword: string) => Promise<void>; // Add this
+
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,9 +57,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             throw error;
         }
     };
+    const resetPassword = async (token: string, newPassword: string) => {
+        try {
+            await authService.resetPassword(token, newPassword);
+            console.log('Password reset successfully');
+        } catch (error) {
+            console.error('Reset password failed', error);
+            throw error;
+        }
+    };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, forgotPassword }}>
+        <AuthContext.Provider value={{ user, login, register, logout, forgotPassword, resetPassword }}>
             {children}
         </AuthContext.Provider>
     );

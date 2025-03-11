@@ -50,5 +50,19 @@ export const authService = {
             throw new Error('Failed to send reset password email');
         }
     },
+    resetPassword: async (token: string, newPassword: string) => {
+        const response = await fetch(`http://localhost:9999/api/auth/reset-password?token=${encodeURIComponent(token)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ newPassword }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to reset password');
+        }
+
+        return response.text(); // Response message
+    },
+
 
 };

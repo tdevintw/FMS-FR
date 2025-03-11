@@ -2,12 +2,12 @@ import React, {JSX} from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
-// Import pages
-import LoginPage from "./pages/auth/login";
-import RegisterPage from "./pages/auth/register";
+import LoginPage from "./pages/auth/Login.tsx";
+import RegisterPage from "./pages/auth/Register.tsx";
 import ProfilePage from "./pages/profile.tsx";
-import ForgetPasswordPage from "./pages/auth/forgetPassword";
+import ForgetPasswordPage from "./pages/auth/ForgetPassword.tsx";
 import "./App.css";
+import ResetPasswordPage from "./pages/auth/ResetPassword.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
     const { user } = useAuth();
@@ -28,15 +28,13 @@ const App: React.FC = () => {
                         {/* Public Routes (Restricted when logged in) */}
                         <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
                         <Route path="/register" element={<PublicRoute element={<RegisterPage />} />} />
-                        <Route path="/forgetPassword" element={<PublicRoute element={<ForgetPasswordPage />} />} />
+                        <Route path="/forget-password" element={<PublicRoute element={<ForgetPasswordPage />} />} />
+                        <Route path="/reset-password/:token" element={<PublicRoute element={<ResetPasswordPage />} />} />
 
-                        {/* Protected Routes (Only accessible when authenticated) */}
                         <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
 
-                        {/* Redirect "/" to dashboard */}
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                        {/* 404 Not Found */}
                         <Route path="*" element={<h1>404 Not Found</h1>} />
                     </Routes>
                 </div>
