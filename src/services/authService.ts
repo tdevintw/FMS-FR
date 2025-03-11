@@ -39,5 +39,16 @@ export const authService = {
     getCurrentUser: () => {
         const userStr = localStorage.getItem('user');
         return userStr ? JSON.parse(userStr) : null;
-    }
+    },
+    forgotPassword: async (email: string) => {
+        const response = await fetch(`http://localhost:9999/api/auth/forgot-password?email=${encodeURIComponent(email)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to send reset password email');
+        }
+    },
+
 };

@@ -6,14 +6,15 @@ interface User {
     username: string;
     email: string;
     token: string;
-    role : string ;
+    role: string;
 }
 
 interface AuthContextType {
     user: User | null;
     login: (username: string, password: string) => Promise<void>;
-    register: (username: string, email: string, password: string , role : string) => Promise<void>;
+    register: (username: string, email: string, password: string, role: string) => Promise<void>;
     logout: () => void;
+    forgotPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,9 +32,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     };
 
-    const register = async (username: string, email: string, password: string , role : string) => {
+    const register = async (username: string, email: string, password: string, role: string) => {
         try {
-            await authService.register({ username, email, password , role });
+            await authService.register({ username, email, password, role });
         } catch (error) {
             console.error('Registration failed', error);
             throw error;
@@ -45,8 +46,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUser(null);
     };
 
+    const forgotPassword = async (email: string) => {
+        try {
+            await authService.forgotPassword(email);
+            console.log('Password reset link sent successfully');
+        } catch (error) {
+            console.error('Forgot password request failed', error);
+            throw error;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout }}>
+        <AuthContext.Provider value={{ user, login, register, logout, forgotPassword }}>
             {children}
         </AuthContext.Provider>
     );

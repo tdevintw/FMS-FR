@@ -1,32 +1,31 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 export const ForgotPasswordForm: React.FC = () => {
     const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
     const { forgotPassword } = useAuth();
-    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
         setMessage('');
+        setError('');
 
         try {
             await forgotPassword(email);
-            setMessage('If an account with this email exists, you will receive a password reset link.');
+            setMessage('A password reset link has been sent to your email.');
         } catch (err) {
-            setError('Failed to reset password. Please try again.');
-            console.error(err);
+            console.error('Error in forgot password:', err);
+            setError('Failed to send reset email. Please try again.');
         }
     };
 
     return (
-        <form className="login-form" onSubmit={handleSubmit}>
-            {error && <div className="error-message">{error}</div>}
+        <form className="reset-password-form" onSubmit={handleSubmit}>
             {message && <div className="success-message">{message}</div>}
+            {error && <div className="error-message">{error}</div>}
+
             <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <input
@@ -38,12 +37,10 @@ export const ForgotPasswordForm: React.FC = () => {
                     required
                 />
             </div>
-            <button type="submit" className="login-button">
+
+            <button type="submit" className="forget-password-button">
                 Reset Password
             </button>
-            <p>
-                Remembered your password? <a className="register-redirect" href="/login">Login</a>
-            </p>
         </form>
     );
 };

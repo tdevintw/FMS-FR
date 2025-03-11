@@ -6,8 +6,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import LoginPage from "./pages/auth/login";
 import RegisterPage from "./pages/auth/register";
 import ProfilePage from "./pages/profile.tsx";
-
-// Optional: Import global styles
+import ForgetPasswordPage from "./pages/auth/forgetPassword";
 import "./App.css";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
@@ -29,6 +28,7 @@ const App: React.FC = () => {
                         {/* Public Routes (Restricted when logged in) */}
                         <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
                         <Route path="/register" element={<PublicRoute element={<RegisterPage />} />} />
+                        <Route path="/forgetPassword" element={<PublicRoute element={<ForgetPasswordPage />} />} />
 
                         {/* Protected Routes (Only accessible when authenticated) */}
                         <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
