@@ -15,6 +15,8 @@ interface UpdateUserData {
 interface UserContextType {
     user: User | null;
     updateUser: (updatedData: UpdateUserData) => Promise<void>;
+    deleteUser: () => Promise<void>;
+
 }
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -47,8 +49,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
 
+
+    const deleteUser = async () => {
+        try {
+            await UserService.deleteUser();
+            setUser(null); // Remove user from state
+        } catch (error) {
+            console.error('Failed to delete user:', error);
+        }
+    };
+
+
     return (
-        <UserContext.Provider value={{ user, updateUser }}>
+        <UserContext.Provider value={{ user, updateUser , deleteUser}}>
             {children}
         </UserContext.Provider>
     );
@@ -59,3 +72,5 @@ export const useUser = () => {
     if (!context) throw new Error('useUser must be used within a UserProvider');
     return context;
 };
+
+

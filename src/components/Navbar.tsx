@@ -5,6 +5,7 @@ import '../style/Navbar.css';
 
 const Navbar: React.FC = () => {
     const { user, logout } = useAuth();
+
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -33,9 +34,6 @@ const Navbar: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <span className="navbar-user">
-                                Welcome, {user.username} ({user.role})
-                            </span>
                             <Link to="/profile" className="navbar-link">Profile</Link>
                             <button
                                 onClick={handleLogout}
