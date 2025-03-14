@@ -26,7 +26,7 @@ const Header = () => {
                                             </li>
                                             <li>
                                                 <a href="shop.html">
-                                                    <span className="menu-text">Shop</span>
+                                                    <span className="menu-text">Profile</span>
                                                 </a>
                                             </li>
                                             <li>
