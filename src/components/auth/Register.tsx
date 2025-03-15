@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 
 const Register = () => {
-    const [firstName, setFirstName] = useState('');
+    const [username, setUsername] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,8 +26,8 @@ const Register = () => {
                                     <input
                                         type="text"
                                         placeholder="First Name"
-                                        value={firstName}
-                                        onChange={(e) => setFirstName(e.target.value)}
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
                                     />
                                 </div>
                                 <div className="single-input-item mb-3">
