@@ -11,6 +11,7 @@ import NotFoundPage from "./pages/NotFoundPage.tsx";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import ForgetPasswordPage from "./pages/auth/ForgetPasswordPage.tsx";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 
 
 
@@ -28,6 +29,7 @@ const App: React.FC = () => {
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/forget-password" element={<ForgetPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
 
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<NotFoundPage />} />

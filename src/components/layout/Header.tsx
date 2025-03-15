@@ -1,3 +1,5 @@
+import {Link} from "react-router-dom";
+
 const Header = () => {
     return (
         <header className="main-header-area">
@@ -20,35 +22,14 @@ const Header = () => {
                                     <nav className="main-nav d-flex justify-content-center">
                                         <ul className="nav">
                                             <li>
-                                                <a className="active" href="index.html">
+                                                <Link to="/" className="active">
                                                     <span className="menu-text"> Home</span>
-                                                </a>
+                                                </Link>
                                             </li>
                                             <li>
-                                                <a href="shop.html">
+                                                <Link to={"/profile"}>
                                                     <span className="menu-text">Profile</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="blog-details-fullwidth.html">
-                                                    <span className="menu-text"> Blog</span>
-                                                </a>
-                                                {/* Blog dropdown menu */}
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <span className="menu-text"> Pages</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="about-us.html">
-                                                    <span className="menu-text"> About</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="contact-us.html">
-                                                    <span className="menu-text">Contact</span>
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                     </nav>
@@ -59,14 +40,10 @@ const Header = () => {
                                     <div className="header-right-area main-nav">
                                         <ul className="nav">
                                             <li className="login-register-wrap d-none d-xl-flex">
-                                                <span><a href="login.html">Login</a></span>
-                                                <span><a href="register.html">Register</a></span>
-                                            </li>
-                                            <li className="minicart-wrap">
-                                                <a href="#" className="minicart-btn toolbar-btn">
-                                                    <i className="ion-bag"></i>
-                                                </a>
-                                                {/* Cart dropdown */}
+                                                <span>
+                                                    <Link to="/login" >Login</Link>
+                                                </span>
+                                                <span><Link to="/register" >Register</Link></span>
                                             </li>
                                             <li className="mobile-menu-btn d-lg-none">
                                                 <a className="off-canvas-btn" href="#">
@@ -82,9 +59,7 @@ const Header = () => {
                 </div>
             </div>
 
-            {/* Mobile Menu */}
             <aside className="off-canvas-wrapper" id="mobileMenu">
-                {/* Mobile menu content */}
             </aside>
         </header>
     );
