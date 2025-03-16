@@ -1,13 +1,40 @@
-import  { useState } from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import {Link, useNavigate} from 'react-router-dom';
 
-const Login = () => {
-    const [email, setEmail] = useState('');
+export const Login: React.FC = () => {
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
+    const [error, setError] = useState('');
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
+
+        try {
+            await login(username, password);
+            navigate('/profile');
+        } catch (err) {
+            if (isAxiosError(err)) {
+                if (err.response && err.response.status === 400) {
+                    const errorMessage = typeof err.response.data === 'string' ? err.response.data : 'Login failed. Please try again.';
+                    setError(errorMessage);
+                } else {
+                    setError('Login failed. Please try again.');
+                }
+            } else {
+                setError('Login failed. Please try again.');
+            }
+            console.error(err);
+        }
     };
+
+    function isAxiosError(error: unknown): error is import('axios').AxiosError {
+        return (error as import('axios').AxiosError).isAxiosError !== undefined;
+    }
+
 
     return (
         <div className="login-register-area mt-no-text mb-no-text">
@@ -20,14 +47,16 @@ const Login = () => {
                                 <p className="desc-content">Please login using account details below.</p>
                             </div>
                             <form onSubmit={handleSubmit}>
+
                                 <div className="single-input-item mb-3">
                                     <input
-                                        type="email"
-                                        placeholder="Email or Username"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        type="text"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
                                     />
                                 </div>
+
                                 <div className="single-input-item mb-3">
                                     <input
                                         type="password"
@@ -36,34 +65,15 @@ const Login = () => {
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
                                 </div>
-                                <div className="single-input-item mb-3">
-                                    <div className="login-reg-form-meta d-flex align-items-center justify-content-between">
-                                        <div className="remember-meta mb-3">
-                                            <div className="custom-control custom-checkbox">
-                                                <input
-                                                    type="checkbox"
-                                                    className="custom-control-input"
-                                                    id="rememberMe"
-                                                    checked={rememberMe}
-                                                    onChange={() => setRememberMe(!rememberMe)}
-                                                />
-                                                <label className="custom-control-label" htmlFor="rememberMe">
-                                                    Remember Me
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <a href="#" className="forget-pwd mb-3">
-                                            Forget Password?
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="single-input-item mb-3">
+                                {error && <div style={{marginBottom : '1rem'}} className="error-message">{error}</div>}
+                                <div className="single-input-item mb-3 d-flex justify-content-center">
                                     <button type="submit" className="btn obrien-button-2 primary-color">
                                         Login
                                     </button>
                                 </div>
-                                <div className="single-input-item">
-                                    <a href="register.html">Create Account</a>
+
+                                <div className="single-input-item float-end">
+                                    <Link to="/register">Create Account</Link>
                                 </div>
                             </form>
                         </div>

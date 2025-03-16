@@ -1,61 +1,130 @@
+import React, {useState, useEffect} from 'react';
+import {useUser} from '../../context/UserContext.tsx';
+
 const ProfileAccount = () => {
+    const {user, updateUser} = useUser();
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        role: '',
+    });
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                username: user.username,
+                email: user.email,
+                password: '',
+                role: user.role,
+            });
+        }
+    }, [user]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+        const password = formData.password.trim();
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+        if (password && password.length < 8) {
+            setError('Password must be at least 8 characters long.');
+        } else if (password && !passwordRegex.test(password)) {
+            setError('Password must contain at least one lowercase letter, one uppercase letter, and one digit.');
+        }
+        else if(password) {
+            try {
+                await updateUser({...(formData.password && {password: formData.password})});
+                setSuccess('Profile updated successfully.');
+            } catch (err) {
+                setError('Updating failed. Please try again.');
+                console.error(err);
+
+            }
+        }
+    };
+
     return (
-        <div className="tab-pane " id="account-info" role="tabpanel">
+        <div className="tab-pane" id="account-info" role="tabpanel">
             <div className="myaccount-content">
                 <h3>Account Details</h3>
                 <div className="account-details-form">
-                    <form action="#">
+                    <form onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-lg-6 col-custom">
                                 <div className="single-input-item mb-3">
-                                    <label htmlFor="first-name" className="required mb-1">First Name</label>
-                                    <input type="text" id="first-name" placeholder="First Name"/>
+                                    <label htmlFor="username" className="required mb-1">Username</label>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        name="username"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        disabled
+                                    />
                                 </div>
                             </div>
                             <div className="col-lg-6 col-custom">
                                 <div className="single-input-item mb-3">
-                                    <label htmlFor="last-name" className="required mb-1">Last Name</label>
-                                    <input type="text" id="last-name" placeholder="Last Name"/>
+                                    <label htmlFor="email" className="required mb-1">Email Address</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        disabled
+                                    />
                                 </div>
                             </div>
                         </div>
+
                         <div className="single-input-item mb-3">
-                            <label htmlFor="display-name" className="required mb-1">Display Name</label>
-                            <input type="text" id="display-name" placeholder="Display Name"/>
+                            <label htmlFor="role" className="required mb-1">Role</label>
+                            <input
+                                type="text"
+                                id="role"
+                                name="role"
+                                value={formData.role}
+                                onChange={handleChange}
+                                disabled
+                            />
                         </div>
+
                         <div className="single-input-item mb-3">
-                            <label htmlFor="email" className="required mb-1">Email Addres</label>
-                            <input type="email" id="email" placeholder="Email Address"/>
+                            <label htmlFor="password" className="required mb-1">New Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="Enter a new password"
+                            />
                         </div>
-                        <fieldset>
-                            <legend>Password change</legend>
-                            <div className="single-input-item mb-3">
-                                <label htmlFor="current-pwd" className="required mb-1">Current Password</label>
-                                <input type="password" id="current-pwd" placeholder="Current Password"/>
-                            </div>
-                            <div className="row">
-                                <div className="col-lg-6 col-custom">
-                                    <div className="single-input-item mb-3">
-                                        <label htmlFor="new-pwd" className="required mb-1">New Password</label>
-                                        <input type="password" id="new-pwd" placeholder="New Password"/>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6 col-custom">
-                                    <div className="single-input-item mb-3">
-                                        <label htmlFor="confirm-pwd" className="required mb-1">Confirm Password</label>
-                                        <input type="password" id="confirm-pwd" placeholder="Confirm Password"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </fieldset>
+
+                        {error && <div style={{marginBottom: '1rem'}} className="error-message">{error}</div>}
+                        {success && <div style={{marginBottom: '1rem'}} className="success-message">{success}</div>}
+
                         <div className="single-input-item single-item-button">
-                            <button className="btn obrien-button primary-btn">Save Changes</button>
+                            <button type="submit" className="btn obrien-button primary-btn">Save Changes</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default ProfileAccount;

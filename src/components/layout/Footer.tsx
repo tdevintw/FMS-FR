@@ -9,10 +9,10 @@ const Footer = () => {
                             <div className="single-footer-widget m-0">
                                 <div className="footer-logo">
                                     <a href="index.html">
-                                        <img src="../src/assets/images/logo/footer.png" alt="Logo Image" />
+                                        <img style={{width : '10rem'}} src="../../../src/assets/images/logo/logo2.png" alt="Logo Image" />
                                     </a>
                                 </div>
-                                <p className="desc-content">Obrien is the best parts shop of your daily nutritions. What kind of nutrition do you need you can get here soluta nobis</p>
+                                <p className="desc-content">FMS is the best parts shop of your daily nutritions. What kind of nutrition do you need you can get here soluta nobis</p>
                                 <div className="social-links">
                                     <ul className="d-flex">
                                         <li>
@@ -96,7 +96,7 @@ const Footer = () => {
                     <div className="row">
                         <div className="col-12 text-center col-custom">
                             <div className="copyright-content">
-                                <p>Copyright © 2020 <a href="https://hasthemes.com/" title="https://hasthemes.com/">HasThemes</a> | Built with&nbsp;<strong>Obrien</strong>&nbsp;by <a href="https://hasthemes.com/" title="https://hasthemes.com/">HasThemes</a>.</p>
+                                <p>Copyright © 2020 <a href="https://hasthemes.com/" title="https://hasthemes.com/">HasThemes</a> | Built with&nbsp;<strong>FMS</strong>&nbsp;by <a href="https://hasthemes.com/" title="https://hasthemes.com/">HasThemes</a>.</p>
                             </div>
                         </div>
                     </div>

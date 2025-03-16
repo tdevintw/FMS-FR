@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 export const AuthHeader: React.FC = () => {
 
@@ -10,7 +11,7 @@ export const AuthHeader: React.FC = () => {
                         <div className="breadcrumb-content position-relative section-content">
                             <h3 className="title-3">Login-Register</h3>
                             <ul>
-                                <li><a href="index.html">Home</a></li>
+                                <li><Link to={"/"}>Home</Link></li>
                                 <li>Login-Register</li>
                             </ul>
                         </div>

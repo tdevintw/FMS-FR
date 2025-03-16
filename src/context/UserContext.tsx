@@ -40,11 +40,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const updateUser = async (updatedData: UpdateUserData) => {
         try {
             await UserService.updateUser(updatedData);
-
-            // Update only allowed fields (ignore password)
             setUser((prevUser) => prevUser ? { ...prevUser, ...updatedData } : null);
         } catch (error) {
             console.error('Failed to update user:', error);
+            throw error;
+
         }
     };
 

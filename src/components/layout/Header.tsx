@@ -1,6 +1,10 @@
 import {Link} from "react-router-dom";
+import {useAuth} from "../../context/AuthContext.tsx";
 
 const Header = () => {
+
+    const  {user} = useAuth() ;
+
     return (
         <header className="main-header-area">
             <div className="main-header">
@@ -8,16 +12,14 @@ const Header = () => {
                     <div className="row">
                         <div className="col-lg-12 col-custom">
                             <div className="row align-items-center">
-                                {/* Logo */}
                                 <div className="col-lg-2 col-xl-2 col-sm-6 col-6 col-custom">
                                     <div className="header-logo d-flex align-items-center">
-                                        <a href="index.html">
+                                        <Link to={"/"}>
                                             <img className="img-full" src="../src/assets/images/logo/logo2.png" alt="Header Logo" />
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
 
-                                {/* Navigation Menu */}
                                 <div className="col-lg-8 col-xl-7 position-static d-none d-lg-block col-custom">
                                     <nav className="main-nav d-flex justify-content-center">
                                         <ul className="nav">
@@ -26,11 +28,14 @@ const Header = () => {
                                                     <span className="menu-text"> Home</span>
                                                 </Link>
                                             </li>
-                                            <li>
-                                                <Link to={"/profile"}>
-                                                    <span className="menu-text">Profile</span>
-                                                </Link>
-                                            </li>
+                                            {user && (
+                                                <li>
+                                                    <Link to={"/profile"}>
+                                                        <span className="menu-text">Profile</span>
+                                                    </Link>
+                                                </li>
+                                            )}
+
                                         </ul>
                                     </nav>
                                 </div>
@@ -39,12 +44,15 @@ const Header = () => {
                                 <div className="col-lg-2 col-xl-3 col-sm-6 col-6 col-custom">
                                     <div className="header-right-area main-nav">
                                         <ul className="nav">
-                                            <li className="login-register-wrap d-none d-xl-flex">
+                                            {!user && (
+                                                <li className="login-register-wrap d-none d-xl-flex">
                                                 <span>
                                                     <Link to="/login" >Login</Link>
                                                 </span>
-                                                <span><Link to="/register" >Register</Link></span>
-                                            </li>
+                                                    <span><Link to="/register" >Register</Link></span>
+                                                </li>
+                                            )}
+
                                             <li className="mobile-menu-btn d-lg-none">
                                                 <a className="off-canvas-btn" href="#">
                                                     <i className="fa fa-bars"></i>
