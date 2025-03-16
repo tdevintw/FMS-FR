@@ -72,7 +72,8 @@ export const Login: React.FC = () => {
                                     </button>
                                 </div>
 
-                                <div className="single-input-item float-end">
+                                <div className="single-input-item d-flex justify-content-between">
+                                    <Link to="/forget-password">Forgot Password ?</Link>
                                     <Link to="/register">Create Account</Link>
                                 </div>
                             </form>
