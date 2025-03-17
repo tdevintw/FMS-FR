@@ -10,8 +10,8 @@ const FeatureCallouts = () => {
                                 <img src="../src/assets/images/icons/icon-1.png" alt="Icon" />
                             </div>
                             <div className="call-to-action-info">
-                                <h3 className="action-title">Free Home Delivery</h3>
-                                <p className="desc-content">Provide free home delivery for all product over $100</p>
+                                <h3 className="action-title">Streamlined Food Management</h3>
+                                <p className="desc-content">Ensure smooth tracking and ordering of food supplies</p>
                             </div>
                         </div>
                     </div>
@@ -21,8 +21,8 @@ const FeatureCallouts = () => {
                                 <img src="../src/assets/images/icons/icon-2.png" alt="Icon" />
                             </div>
                             <div className="call-to-action-info">
-                                <h3 className="action-title">Quality Products</h3>
-                                <p className="desc-content">We ensure our product quality all times</p>
+                                <h3 className="action-title">Trusted Suppliers</h3>
+                                <p className="desc-content">Partnering with the best food suppliers for premium quality ingredients</p>
                             </div>
                         </div>
                     </div>
@@ -32,8 +32,8 @@ const FeatureCallouts = () => {
                                 <img src="../src/assets/images/icons/icon-3.png" alt="Icon" />
                             </div>
                             <div className="call-to-action-info">
-                                <h3 className="action-title">Online Support</h3>
-                                <p className="desc-content">To satisfy our customer we try to give support online</p>
+                                <h3 className="action-title">Real-Time Tracking</h3>
+                                <p className="desc-content">Monitor food stock, supplier orders, and consumption in real-time</p>
                             </div>
                         </div>
                     </div>

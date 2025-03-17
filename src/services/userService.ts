@@ -17,7 +17,6 @@ const UserService = {
             throw new Error('User not authenticated');
         }
 
-        // Decode JWT to extract role and user ID
         const tokenParts = user.token.split('.');
         if (tokenParts.length !== 3) {
             throw new Error('Invalid token format');
@@ -31,12 +30,11 @@ const UserService = {
             throw new Error('Failed to decode token');
         }
 
-        const { role, id } = tokenPayload;
+        const {role, id} = tokenPayload;
         if (!role || !id) {
             throw new Error('Invalid token structure');
         }
 
-        // Construct the correct API URL based on role
         const rolePath = role.toLowerCase() + 's';
         const apiUrl = `http://localhost:9999/api/${rolePath}/${id}`;
 
@@ -55,7 +53,7 @@ const UserService = {
         return response.json();
     },
 
-    async updateUser(data: {password?: string }) {
+    async updateUser(data: { password?: string }) {
         const storedUser = localStorage.getItem('user');
         if (!storedUser) {
             throw new Error('User not authenticated');
@@ -86,7 +84,7 @@ const UserService = {
             throw new Error('Failed to decode token');
         }
 
-        const { role, id } = tokenPayload;
+        const {role, id} = tokenPayload;
         if (!role || !id) {
             throw new Error('Invalid token structure');
         }
@@ -102,7 +100,7 @@ const UserService = {
             },
             body: JSON.stringify(data)
         });
-console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data));
         if (!response.ok) {
             throw new Error('Failed to update user');
         }
@@ -141,7 +139,7 @@ console.log(JSON.stringify(data));
             throw new Error('Failed to decode token');
         }
 
-        const { role, id } = tokenPayload;
+        const {role, id} = tokenPayload;
         if (!role || !id) {
             throw new Error('Invalid token structure');
         }
@@ -162,6 +160,7 @@ console.log(JSON.stringify(data));
 
         // Remove user from localStorage
         localStorage.removeItem('user');
-    }};
+    }
+};
 
 export default UserService;

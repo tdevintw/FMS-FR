@@ -7,9 +7,9 @@ const Newsletter = () => {
                     <div className="col-lg-8 col-xl-5 offset-xl-6 offset-lg-3 col-custom">
                         <div className="newsletter-content text-center d-flex flex-column align-items-center justify-content-center h-100">
                             <div className="section-content">
-                                <h4 className="title-4 text-uppercase">Special <span>Offer</span> for subscription</h4>
-                                <h2 className="title-3 text-uppercase">Get instant discount for membership</h2>
-                                <p className="desc-content">Subscribe our newsletter and all latest news of our <br />latest product, promotion and offers</p>
+                                <h4 className="title-4 text-uppercase">Efficient  <span>Hotel </span> Food Management</h4>
+                                <h2 className="title-3 text-uppercase">Improve hotel food supply with real-time tracking and analytics</h2>
+                                <p className="desc-content">Stay updated with insights on food supply,<br /> inventory management, and cost reduction</p>
                             </div>
                             <div className="newsletter-form-wrap ml-auto mr-auto">
                                 <form id="mc-form" className="mc-form d-flex position-relative">
