@@ -4,8 +4,6 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import ScrollToTop from '../components/layout/ScrollToTop';
 import QuickViewModal from '../components/layout/QuickViewModal';
-
-// Home section components
 import HeroSlider from '../components/home/HeroSlider';
 import FeatureCallouts from '../components/home/FeatureCallouts';
 import BannerArea from '../components/home/BannerArea';

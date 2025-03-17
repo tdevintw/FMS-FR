@@ -11,6 +11,9 @@ import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import ForgetPasswordPage from "./pages/auth/ForgetPasswordPage.tsx";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage.tsx";
+import ManagerDashboardPage from "./pages/manager/ManagerDashboardPage.tsx";
+import SupplierDashboardPage from "./pages/supplier/SupplierDashboardPage.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
     const { user } = useAuth();
@@ -32,7 +35,6 @@ const App: React.FC = () => {
                         <Route path="/register" element={<PublicRoute element={<RegisterPage />} />} />
                         <Route path="/forget-password" element={<PublicRoute element={<ForgetPasswordPage />} />} />
                         <Route path="/reset-password" element={<PublicRoute element={<ResetPasswordPage />} />} />
-
                         <Route path="/profile" element={
                             <ProtectedRoute element={
                                 <UserProvider>
@@ -40,6 +42,34 @@ const App: React.FC = () => {
                                 </UserProvider>
                             } />
                         } />
+
+                        <Route path="/admin" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <AdminDashboardPage />
+                                </UserProvider>
+                            } />
+                        } />
+
+
+                        <Route path="/manager" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <ManagerDashboardPage />
+                                </UserProvider>
+                            } />
+                        } />
+
+                        <Route path="/supplier" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <SupplierDashboardPage />
+                                </UserProvider>
+                            } />
+                        } />
+
+
+
 
                         <Route path="/" element={<HomePage />} />
 

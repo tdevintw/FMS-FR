@@ -35,6 +35,9 @@ const ProfileAside = () => {
                 <Link to={"/profile"} data-bs-toggle="tab">
                     <i className="fa fa-user"></i> Account Details
                 </Link>
+                <Link to={"/admin"} data-bs-toggle="tab">
+                    <i className="fa fa-dashboard"></i>Dashboard
+                </Link>
                 <a onClick={handleDelete}>
                     <i className="fa fa-trash"></i> Delete Account
                 </a>
