@@ -1,7 +1,7 @@
-import React, { JSX } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import { UserProvider } from "./context/UserContext";
+import React, {JSX} from "react";
+import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import {AuthProvider, useAuth} from "./context/AuthContext";
+import {UserProvider} from "./context/UserContext";
 
 import "./App.css";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
@@ -14,15 +14,19 @@ import ProfilePage from "./pages/ProfilePage.tsx";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage.tsx";
 import ManagerDashboardPage from "./pages/manager/ManagerDashboardPage.tsx";
 import SupplierDashboardPage from "./pages/supplier/SupplierDashboardPage.tsx";
+import CategoryPage from "./pages/admin/CategoryPage.tsx";
+import FoodPage from "./pages/admin/FoodPage.tsx";
+import CityPage from "./pages/admin/CityPage.tsx";
+import CountryPage from "./pages/admin/Country.tsx";
 
-const PublicRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
-    const { user } = useAuth();
-    return user ? <Navigate to="/profile" replace /> : element;
+const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
+    const {user} = useAuth();
+    return user ? <Navigate to="/profile" replace/> : element;
 };
 
-const ProtectedRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
-    const { user } = useAuth();
-    return user ? element : <Navigate to="/login" replace />;
+const ProtectedRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
+    const {user} = useAuth();
+    return user ? element : <Navigate to="/login" replace/>;
 };
 
 const App: React.FC = () => {
@@ -31,49 +35,84 @@ const App: React.FC = () => {
             <Router>
                 <div className="app-container">
                     <Routes>
-                        <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
-                        <Route path="/register" element={<PublicRoute element={<RegisterPage />} />} />
-                        <Route path="/forget-password" element={<PublicRoute element={<ForgetPasswordPage />} />} />
-                        <Route path="/reset-password" element={<PublicRoute element={<ResetPasswordPage />} />} />
+                        <Route path="/login" element={<PublicRoute element={<LoginPage/>}/>}/>
+                        <Route path="/register" element={<PublicRoute element={<RegisterPage/>}/>}/>
+                        <Route path="/forget-password" element={<PublicRoute element={<ForgetPasswordPage/>}/>}/>
+                        <Route path="/reset-password" element={<PublicRoute element={<ResetPasswordPage/>}/>}/>
                         <Route path="/profile" element={
                             <ProtectedRoute element={
                                 <UserProvider>
-                                    <ProfilePage />
+                                    <ProfilePage/>
                                 </UserProvider>
-                            } />
-                        } />
+                            }/>
+                        }/>
 
                         <Route path="/admin" element={
                             <ProtectedRoute element={
                                 <UserProvider>
-                                    <AdminDashboardPage />
+                                    <AdminDashboardPage/>
                                 </UserProvider>
-                            } />
-                        } />
+                            }/>
+                        }/>
 
 
                         <Route path="/manager" element={
                             <ProtectedRoute element={
                                 <UserProvider>
-                                    <ManagerDashboardPage />
+                                    <ManagerDashboardPage/>
                                 </UserProvider>
-                            } />
-                        } />
+                            }/>
+                        }/>
 
                         <Route path="/supplier" element={
                             <ProtectedRoute element={
                                 <UserProvider>
-                                    <SupplierDashboardPage />
+                                    <SupplierDashboardPage/>
                                 </UserProvider>
-                            } />
-                        } />
+                            }/>
+
+                        }/>
+
+                        <Route path="/admin/categories" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <CategoryPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
+                        <Route path="/admin/foods" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <FoodPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
+                        <Route path="/admin/countries" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <CountryPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
+                        <Route path="/admin/cities" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <CityPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
 
 
+                        <Route path="/" element={<HomePage/>}/>
 
-
-                        <Route path="/" element={<HomePage />} />
-
-                        <Route path="*" element={<NotFoundPage />} />
+                        <Route path="*" element={<NotFoundPage/>}/>
                     </Routes>
                 </div>
             </Router>

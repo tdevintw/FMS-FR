@@ -1,15 +1,24 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext.tsx";
-import { useUser } from "../../context/UserContext.tsx";
+import {Link, useNavigate} from "react-router-dom";
+import {useAuth} from "../../context/AuthContext.tsx";
+import {useUser} from "../../context/UserContext.tsx";
 
 const ProfileAside = () => {
-    const { deleteUser } = useUser();
-    const { logout } = useAuth();
+    const {deleteUser , user} = useUser();
+
+    const {logout} = useAuth();
     const navigate = useNavigate();
+
 
     const handleLogout = () => {
         logout();
         navigate('/login');
+    };
+
+    const getRolePath = () => {
+        if (user?.role === "ADMIN") return "/admin";
+        if (user?.role === "MANAGER") return "/manager";
+        if (user?.role === "SUPPLIER") return "/supplier";
+        return "/profile"; // Default path for other roles
     };
 
     const handleDelete = async () => {
@@ -19,12 +28,11 @@ const ProfileAside = () => {
             try {
                 await deleteUser();
                 alert('Account deleted successfully.');
-                window.location.href = '/login'; // Redirect to login after deletion
+                window.location.href = '/login';
             } catch (err) {
                 console.error(err);
             }
         } else {
-            // If canceled, you don't need to do anything
             console.log("Account deletion canceled.");
         }
     };
@@ -35,9 +43,11 @@ const ProfileAside = () => {
                 <Link to={"/profile"} data-bs-toggle="tab">
                     <i className="fa fa-user"></i> Account Details
                 </Link>
-                <Link to={"/admin"} data-bs-toggle="tab">
+                <Link to={getRolePath()} data-bs-toggle="tab">
                     <i className="fa fa-dashboard"></i>Dashboard
                 </Link>
+
+
                 <a onClick={handleDelete}>
                     <i className="fa fa-trash"></i> Delete Account
                 </a>

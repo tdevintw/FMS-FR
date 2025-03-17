@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Link} from "react-router-dom";
 
 const Dashboard = () => {
     const [isHoveredBuilding, setIsHoveredBuilding] = useState(false);
@@ -8,7 +9,7 @@ const Dashboard = () => {
             <div className="myaccount-content">
                 <h3>Manager</h3>
                 <div className="account-details-form">
-                    <div
+                    <Link to={"/admin/buildings"}
                         className="d-flex align-items-center justify-content-between mb-3 p-2"
                         style={{
                             transition: "all 0.3s ease",
@@ -27,7 +28,7 @@ const Dashboard = () => {
                             />
                         </div>
                         <span>Building</span>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>

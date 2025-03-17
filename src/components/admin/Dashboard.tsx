@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Link} from "react-router-dom";
 
 const Dashboard = () => {
     const [isHoveredCountry, setIsHoveredCountry] = useState(false);
@@ -11,7 +12,7 @@ const Dashboard = () => {
             <div className="myaccount-content">
                 <h3>Admin</h3>
                 <div className="account-details-form">
-                    <div
+                    <Link to={"/admin/countries"}
                         className="d-flex align-items-center justify-content-between mb-3 p-2"
                         style={{
                             transition: "all 0.3s ease",
@@ -31,9 +32,9 @@ const Dashboard = () => {
                             />
                         </div>
                         <span>Country</span>
-                    </div>
+                    </Link>
 
-                    <div
+                    <Link to={"/admin/cities"}
                         className="d-flex align-items-center justify-content-between mb-3 p-2"
                         style={{
                             transition: "all 0.3s ease",
@@ -53,9 +54,9 @@ const Dashboard = () => {
                             />
                         </div>
                         <span>City</span>
-                    </div>
+                    </Link>
 
-                    <div
+                    <Link to={"/admin/foods"}
                         className="d-flex align-items-center justify-content-between mb-3 p-2"
                         style={{
                             transition: "all 0.3s ease",
@@ -74,9 +75,9 @@ const Dashboard = () => {
                             />
                         </div>
                         <span>Food</span>
-                    </div>
+                    </Link>
 
-                    <div
+                    <Link to={"categories"}
                         className="d-flex align-items-center justify-content-between mb-3 p-2"
                         style={{
                             transition: "all 0.3s ease",
@@ -95,7 +96,7 @@ const Dashboard = () => {
                             />
                         </div>
                         <span>Category</span>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>
