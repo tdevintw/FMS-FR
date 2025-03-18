@@ -17,7 +17,7 @@ import SupplierDashboardPage from "./pages/supplier/SupplierDashboardPage.tsx";
 import CategoryPage from "./pages/admin/CategoryPage.tsx";
 import FoodPage from "./pages/admin/FoodPage.tsx";
 import CityPage from "./pages/admin/CityPage.tsx";
-import CountryPage from "./pages/admin/Country.tsx";
+import CountryPage from "./pages/admin/CountryPage.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
     const {user} = useAuth();
