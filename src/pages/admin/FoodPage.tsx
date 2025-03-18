@@ -2,6 +2,7 @@ import Header from "../../components/layout/Header.tsx";
 import Footer from "../../components/layout/Footer.tsx";
 import {DashboardHeader} from "../../components/admin/DashboardHeader.tsx";
 import Food from "../../components/admin/food/Food.tsx";
+import AddFood from "../../components/admin/food/AddFood.tsx";
 
 const FoodPage = () => {
     return (
@@ -9,6 +10,7 @@ const FoodPage = () => {
             <Header/>
             <main>
                 <DashboardHeader page={"Food"}/>
+                <AddFood />
                 <div className="cart-main-wrapper mt-no-text mb-no-text">
                     <div className="container container-default-2 custom-area">
                         <div className="row mx-5">

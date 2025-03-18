@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 
-interface EditCategoryProps {
-    category: { id: number; title: string; image: string };
-    onClose: () => void;
-    onUpdate: (category: { id: number; title: string; image: string }) => void;
-}
-
-const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
-    const [categoryName, setCategoryName] = useState(category.title);
+const AddFood = () => {
+    const [showModal, setShowModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const modalOverlayStyle: React.CSSProperties = {
@@ -47,12 +41,12 @@ const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
         justifyContent: "space-between",
         marginTop: "15px",
     };
-
     const fileInputStyle: React.CSSProperties = {
         width: "100%",
         margin: "10px 0",
         cursor: "pointer",
     };
+
 
     const buttonStyle: React.CSSProperties = {
         padding: "10px 20px",
@@ -62,7 +56,7 @@ const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
         fontSize: "16px",
     };
 
-    const saveButtonStyle: React.CSSProperties = {
+    const addButtonStyle: React.CSSProperties = {
         ...buttonStyle,
         backgroundColor: "#13aa52",
         color: "white",
@@ -80,44 +74,50 @@ const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
         }
     };
 
-    const handleSaveChanges = () => {
-        onUpdate({
-            id: category.id,
-            title: categoryName,
-            image: selectedFile ? URL.createObjectURL(selectedFile) : category.image,
-        });
-        onClose();
-    }
     return (
-        <div style={modalOverlayStyle} onClick={onClose}>
-            <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-                <h2 style={{ marginBottom: "2rem" }}>Edit Category</h2>
-                <input
-                    type="text"
-                    placeholder="Category Name"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    style={inputStyle}
-                />
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    style={fileInputStyle}
-                />
-                {selectedFile && <p>{selectedFile.name}</p>}
+        <div style={{ display: "flex", justifyContent: "end" }}>
+            <button
+                style={{
+                    backgroundColor: "#13aa52",
+                    border: "1px solid #13aa52",
+                    borderRadius: "4px",
+                    boxShadow: "rgba(0, 0, 0, .1) 0 2px 4px 0",
+                    color: "#fff",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                    padding: "10px 45px",
+                    marginRight: "10%",
+                    marginTop: "2rem",
+                }}
+                onClick={() => setShowModal(true)}
+            >
+                Add
+            </button>
 
-                <div style={actionsStyle}>
-                    <button style={saveButtonStyle} onClick={handleSaveChanges}>
-                        Save Changes
-                    </button>
-                    <button style={cancelButtonStyle} onClick={onClose}>
-                        Cancel
-                    </button>
+            {showModal && (
+                <div style={modalOverlayStyle} onClick={() => setShowModal(false)}>
+                    <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+                        <h2 style={{marginBottom: '2rem'}}>Add Category</h2>
+                        <input type="text" placeholder="Category Name" style={inputStyle} />
+                        <input type="text" placeholder="Food Name" style={inputStyle} />
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            style={fileInputStyle}
+                        />
+
+                        {selectedFile && <p>{selectedFile.name}</p>}
+                        <div style={actionsStyle}>
+                            <button style={addButtonStyle}>Add</button>
+                            <button style={cancelButtonStyle} onClick={() => setShowModal(false)}>Cancel</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
 
-export default EditCategory;
+export default AddFood;
