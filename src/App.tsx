@@ -18,6 +18,7 @@ import CategoryPage from "./pages/admin/CategoryPage.tsx";
 import FoodPage from "./pages/admin/FoodPage.tsx";
 import CityPage from "./pages/admin/CityPage.tsx";
 import CountryPage from "./pages/admin/CountryPage.tsx";
+import BuildingPage from "./pages/manager/BuildingPage.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
     const {user} = useAuth();
@@ -108,6 +109,16 @@ const App: React.FC = () => {
                             }/>
 
                         }/>
+
+                        <Route path="/manager/buildings" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <BuildingPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
 
 
                         <Route path="/" element={<HomePage/>}/>

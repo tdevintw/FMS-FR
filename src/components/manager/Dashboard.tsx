@@ -9,7 +9,7 @@ const Dashboard = () => {
             <div className="myaccount-content">
                 <h3>Manager</h3>
                 <div className="account-details-form">
-                    <Link to={"/admin/buildings"}
+                    <Link to={"/manager/buildings"}
                         className="d-flex align-items-center justify-content-between mb-3 p-2"
                         style={{
                             transition: "all 0.3s ease",
