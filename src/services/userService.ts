@@ -157,8 +157,6 @@ const UserService = {
         if (!response.ok) {
             throw new Error('Failed to delete user');
         }
-
-        // Remove user from localStorage
         localStorage.removeItem('user');
     }
 };
