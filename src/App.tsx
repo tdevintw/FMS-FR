@@ -19,6 +19,7 @@ import FoodPage from "./pages/admin/FoodPage.tsx";
 import CityPage from "./pages/admin/CityPage.tsx";
 import CountryPage from "./pages/admin/CountryPage.tsx";
 import BuildingPage from "./pages/manager/BuildingPage.tsx";
+import InventoryPage from "./pages/supplier/InventoryPage.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
     const {user} = useAuth();
@@ -118,6 +119,15 @@ const App: React.FC = () => {
                             }/>
 
                         }/>
+                        <Route path="/supplier/inventories" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <InventoryPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
 
 
 
