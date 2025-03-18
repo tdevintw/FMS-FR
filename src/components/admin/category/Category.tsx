@@ -13,7 +13,7 @@ const Category = () => {
     // Function to update category
     const handleUpdateCategory = (updatedCategory: { id: number; image: string; title: string }) => {
         setCartItems(cartItems.map(item => (item.id === updatedCategory.id ? updatedCategory : item)));
-        setEditModalOpen(false); // Close modal after update
+        setEditModalOpen(false);
     };
 
     return (
