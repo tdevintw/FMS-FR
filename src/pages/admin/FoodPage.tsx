@@ -9,9 +9,18 @@ const FoodPage = () => {
             <Header/>
             <main>
                 <DashboardHeader page={"Food"}/>
-                <div className="my-account-wrapper mt-no-text mb-no-text">
-                    <div  className="container container-default-2 custom-area d-flex justify-content-center text-center">
-                        <Food />
+                <div className="cart-main-wrapper mt-no-text mb-no-text">
+                    <div className="container container-default-2 custom-area">
+                        <div className="row mx-5">
+                            <div className="col-lg-12">
+                                <div className="cart-table table-responsive">
+                                    <div
+                                        className="container container-default-2 custom-area d-flex justify-content-center text-center">
+                                        <Food/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
