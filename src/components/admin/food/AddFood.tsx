@@ -1,8 +1,40 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
+import CategoryService from "../../../services/categoryService.ts";
+import FoodService from "../../../services/foodService.ts";
 
 const AddFood = () => {
     const [showModal, setShowModal] = useState(false);
+    const [foodName, setFoodName] = useState("");
+    const [categoryId, setCategoryId] = useState("");
+    const [categories, setCategories] = useState<{ id: string; category: string }[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categoryList = await CategoryService.getAll();
+                setCategories(categoryList);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    const handleAddFood = async () => {
+        if (!foodName.trim() || !categoryId.trim() || !selectedFile) {
+            alert("All fields are required.");
+            return;
+        }
+
+        try {
+            await FoodService.add(foodName, categoryId, selectedFile);
+            setShowModal(false);
+        } catch (error) {
+            console.error("Error adding food:", error);
+        }
+    };
+
 
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
@@ -67,6 +99,10 @@ const AddFood = () => {
         backgroundColor: "#d9534f",
         color: "white",
     };
+    const selectStyle: React.CSSProperties = {
+        ...inputStyle,
+        cursor: "pointer",
+    };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -75,7 +111,7 @@ const AddFood = () => {
     };
 
     return (
-        <div style={{ display: "flex", justifyContent: "end" }}>
+        <div style={{display: "flex", justifyContent: "end"}}>
             <button
                 style={{
                     backgroundColor: "#13aa52",
@@ -98,8 +134,25 @@ const AddFood = () => {
                 <div style={modalOverlayStyle} onClick={() => setShowModal(false)}>
                     <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
                         <h2 style={{marginBottom: '2rem'}}>Add Category</h2>
-                        <input type="text" placeholder="Category Name" style={inputStyle} />
-                        <input type="text" placeholder="Food Name" style={inputStyle} />
+                        <input
+                            type="text" placeholder="Food Name"
+                            style={inputStyle}
+                            onChange={(e) => setFoodName(e.target.value)}
+                        />
+                        <select
+                            value={categoryId}
+                            onChange={(e) => setCategoryId(e.target.value)}
+                            style={selectStyle}
+                            className="custom-select"
+                        >
+                            <option value="">Select a category</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.category}
+                                </option>
+                            ))}
+                        </select>
+
 
                         <input
                             type="file"
@@ -110,7 +163,10 @@ const AddFood = () => {
 
                         {selectedFile && <p>{selectedFile.name}</p>}
                         <div style={actionsStyle}>
-                            <button style={addButtonStyle}>Add</button>
+                            <button style={addButtonStyle}
+                                    onClick={handleAddFood}
+                            >Add
+                            </button>
                             <button style={cancelButtonStyle} onClick={() => setShowModal(false)}>Cancel</button>
                         </div>
                     </div>
