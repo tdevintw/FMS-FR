@@ -1,18 +1,33 @@
-import  { useState } from "react";
-import EditCountry from "./EditCountry"; // Import EditCountry component
+import { useState } from "react";
+import EditCountry from "./EditCountry";
+import CountryService from "../../../services/countryService.ts";
 
-const Country = () => {
-    const [cartItems, setCartItems] = useState([
-        { id: 1, country: "Morocco" },
-        { id: 2, country: "France" },
-    ]);
+interface Country {
+    id: string;
+    country: string;
+}
 
+interface Props {
+    countries: Country[];
+    setCountries: React.Dispatch<React.SetStateAction<Country[]>>;
+}
+
+const Country = ({ countries, setCountries }: Props) => {
+    const { remove } = CountryService;
     const [editModalOpen, setEditModalOpen] = useState(false);
-    const [selectedCountry, setSelectedCountry] = useState<{ id: number; country: string } | null>(null);
+    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
-    const handleUpdateCountry = (updatedCountry: { id: number; country: string }) => {
-        setCartItems(cartItems.map(item => (item.id === updatedCountry.id ? updatedCountry : item)));
+    const handleUpdateCountry = (updatedCountry: Country) => {
+        setCountries(countries.map(item => (item.id === updatedCountry.id ? updatedCountry : item)));
         setEditModalOpen(false);
+    };
+
+    const handleDeleteCountry = async (id: string) => {
+        try {
+            await remove(id);
+        } catch (error) {
+            console.error("Error deleting country:", error);
+        }
     };
 
     return (
@@ -26,7 +41,7 @@ const Country = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {cartItems.map((item) => (
+                {countries.map((item) => (
                     <tr key={item.id} className="border-t">
                         <td className="p-3" style={{ border: "1px solid gray" }}>
                             {item.country}
@@ -35,11 +50,15 @@ const Country = () => {
                             <img
                                 style={{ width: "2.2rem", cursor: "pointer" }}
                                 src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
-                                onClick={() => { setSelectedCountry(item); setEditModalOpen(true); }} // Open Edit Modal
+                                onClick={() => { setSelectedCountry(item); setEditModalOpen(true); }}
                             />
                         </td>
                         <td className="p-3 cursor-pointer text-center" style={{ border: "1px solid gray", width: "10rem" }}>
-                            <img style={{ width: "2.2rem" }} src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png" />
+                            <img
+                                style={{ width: "2.2rem", cursor: "pointer" }}
+                                src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
+                                onClick={() => handleDeleteCountry(item.id)}
+                            />
                         </td>
                     </tr>
                 ))}
@@ -50,7 +69,7 @@ const Country = () => {
                 <EditCountry
                     country={selectedCountry}
                     onClose={() => setEditModalOpen(false)}
-                    onUpdate={handleUpdateCountry} // Pass function for updating
+                    onUpdate={handleUpdateCountry}
                 />
             )}
         </div>

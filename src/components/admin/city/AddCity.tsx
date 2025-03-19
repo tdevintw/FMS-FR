@@ -1,7 +1,12 @@
 import React, { useState } from "react";
+import CountryService from "../../../services/countryService.ts";
 
-const AddCategory = () => {
+const AddCity = () => {
     const [showModal, setShowModal] = useState(false);
+    const [country, setCountry] = useState("");  // State to capture country input
+    const [loading, setLoading] = useState(false);  // State to manage loading state
+    const [error, setError] = useState("");  // State to capture any error messages
+    const { add } = CountryService;
 
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
@@ -41,7 +46,6 @@ const AddCategory = () => {
         marginTop: "15px",
     };
 
-
     const buttonStyle: React.CSSProperties = {
         padding: "10px 20px",
         border: "none",
@@ -62,7 +66,25 @@ const AddCategory = () => {
         color: "white",
     };
 
+    const handleAddCountry = async () => {
+        if (!country.trim()) {
+            setError("Country name is required.");
+            return;
+        }
+        setLoading(true);
+        setError(""); // Reset any previous errors
 
+        try {
+            const response = await add({ country });
+            console.log("Country added successfully:", response);
+            setShowModal(false);  // Close modal on success
+        } catch (err) {
+            setError("Failed to add country. Please try again.");
+            console.error("Error adding country:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div style={{ display: "flex", justifyContent: "end" }}>
@@ -87,13 +109,34 @@ const AddCategory = () => {
             {showModal && (
                 <div style={modalOverlayStyle} onClick={() => setShowModal(false)}>
                     <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-                        <h2 style={{marginBottom: '2rem'}}>Add City</h2>
-                        <input type="text" placeholder="City name" style={inputStyle} />
-                        <input type="text" placeholder="Country name" style={inputStyle} />
+                        <h2 style={{ marginBottom: "2rem" }}>Add Country</h2>
+
+                        {/* Country name input */}
+                        <input
+                            type="text"
+                            placeholder="Country name"
+                            style={inputStyle}
+                            value={country}
+                            onChange={(e) => setCountry(e.target.value)}
+                        />
+
+                        {/* Show error message if there is one */}
+                        {error && <p style={{ color: "red" }}>{error}</p>}
 
                         <div style={actionsStyle}>
-                            <button style={addButtonStyle}>Add</button>
-                            <button style={cancelButtonStyle} onClick={() => setShowModal(false)}>Cancel</button>
+                            <button
+                                style={addButtonStyle}
+                                onClick={handleAddCountry}
+                                disabled={loading}  // Disable button when loading
+                            >
+                                {loading ? "Adding..." : "Add"}
+                            </button>
+                            <button
+                                style={cancelButtonStyle}
+                                onClick={() => setShowModal(false)}
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -102,4 +145,4 @@ const AddCategory = () => {
     );
 };
 
-export default AddCategory;
+export default AddCity;

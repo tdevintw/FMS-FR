@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
 interface EditCountryProps {
-    country: { id: number; country: string };
+    country: { id: string; country: string };
     onClose: () => void;
-    onUpdate: (country: { id: number; country: string }) => void;
+    onUpdate: (country: { id: string; country: string }) => void;
 }
 
 const EditCountry = ({ country, onClose, onUpdate }: EditCountryProps) => {

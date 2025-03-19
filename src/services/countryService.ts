@@ -1,6 +1,5 @@
 const CountryService = {
 
-    api: "http://localhost:9999/api/countries",
 
     async add(data: { country: string }) {
 
@@ -21,7 +20,7 @@ const CountryService = {
         }
 
 
-        const response = await fetch(this.api, {
+        const response = await fetch("http://localhost:9999/api/countries", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -38,7 +37,7 @@ const CountryService = {
 
     },
 
-    async delete(uuid: string) {
+    async remove(uuid: string) {
 
 
         const storedUser = localStorage.getItem('user');
@@ -58,7 +57,7 @@ const CountryService = {
         }
 
 
-        const response = await fetch(this.api + "/" + uuid, {
+        const response = await fetch("http://localhost:9999/api/countries" + "/" + uuid, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -68,7 +67,6 @@ const CountryService = {
 
         return response.json();
     },
-
 
     async edit(data: {country: string } , uuid : string) {
         const storedUser = localStorage.getItem('user');
@@ -88,7 +86,7 @@ const CountryService = {
         }
 
 
-        const response = await fetch(this.api + "/" + uuid, {
+        const response = await fetch("http://localhost:9999/api/countries" + "/" + uuid, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -99,6 +97,7 @@ const CountryService = {
 
         return response.json();
     },
+
     async getAll(){
         const storedUser = localStorage.getItem('user');
         if (!storedUser) {
@@ -117,7 +116,7 @@ const CountryService = {
         }
 
 
-        const response = await fetch(this.api , {
+        const response = await fetch("http://localhost:9999/api/countries", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -146,7 +145,7 @@ const CountryService = {
     }
 
 
-    const response = await fetch(this.api+"/"+uuid , {
+    const response = await fetch("http://localhost:9999/api/countries"+"/"+uuid , {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
