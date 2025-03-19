@@ -41,7 +41,6 @@ const AddCity = () => {
         }
     };
 
-    // Styles from old component
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
         top: 0,

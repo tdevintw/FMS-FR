@@ -1,14 +1,16 @@
 import React, { useState } from "react";
+import CategoryService from "../../../services/categoryService.ts";
 
 interface EditCategoryProps {
-    category: { id: number; title: string; image: string };
+    category: { id: string; category: string; imageUrl: string };
     onClose: () => void;
-    onUpdate: (category: { id: number; title: string; image: string }) => void;
+    onUpdate: (category: { id: string; category: string; imageUrl: string }) => void;
 }
 
 const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
-    const [categoryName, setCategoryName] = useState(category.title);
+    const [categoryName, setCategoryName] = useState(category.category);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const { edit } = CategoryService;
 
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
@@ -27,8 +29,8 @@ const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
         padding: "20px",
         borderRadius: "8px",
         width: "30rem",
-        marginRight: '0.5rem',
-        marginLeft: '0.5rem',
+        marginRight: "0.5rem",
+        marginLeft: "0.5rem",
         textAlign: "center",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     };
@@ -80,14 +82,29 @@ const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
         }
     };
 
-    const handleSaveChanges = () => {
-        onUpdate({
-            id: category.id,
-            title: categoryName,
-            image: selectedFile ? URL.createObjectURL(selectedFile) : category.image,
-        });
-        onClose();
-    }
+    const handleSaveChanges = async () => {
+        if (!categoryName) {
+            alert("Please provide a category name.");
+            return;
+        }
+
+        try {
+            const updatedCategory = await edit(  categoryName, selectedFile  , category.id);
+
+            onUpdate({
+                id: category.id,
+                category: categoryName,
+                imageUrl: updatedCategory.imageUrl || category.imageUrl, // Use new image if updated
+            });
+
+            alert("Category updated successfully!");
+            onClose();
+        } catch (error) {
+            alert("Failed to update category.");
+            console.error(error);
+        }
+    };
+
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
             <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
@@ -99,12 +116,7 @@ const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
                     onChange={(e) => setCategoryName(e.target.value)}
                     style={inputStyle}
                 />
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    style={fileInputStyle}
-                />
+                <input type="file" accept="image/*" onChange={handleFileChange} style={fileInputStyle} />
                 {selectedFile && <p>{selectedFile.name}</p>}
 
                 <div style={actionsStyle}>
