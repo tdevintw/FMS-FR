@@ -1,3 +1,4 @@
+
 const CountryService = {
 
 
@@ -68,7 +69,9 @@ const CountryService = {
         return response.json();
     },
 
-    async edit(data: {country: string } , uuid : string) {
+    async edit(data: {id : string , country: string }) {
+
+        console.log("Editing data:", data);
         const storedUser = localStorage.getItem('user');
         if (!storedUser) {
             throw new Error('User not authenticated');
@@ -86,7 +89,7 @@ const CountryService = {
         }
 
 
-        const response = await fetch("http://localhost:9999/api/countries" + "/" + uuid, {
+        const response = await fetch("http://localhost:9999/api/countries" + "/" + data.id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -127,7 +130,7 @@ const CountryService = {
         return response.json();
     },
 
-    async get(uuid : string){
+    async get(id : string){
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
         throw new Error('User not authenticated');
@@ -145,7 +148,7 @@ const CountryService = {
     }
 
 
-    const response = await fetch("http://localhost:9999/api/countries"+"/"+uuid , {
+    const response = await fetch("http://localhost:9999/api/countries"+"/"+id , {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

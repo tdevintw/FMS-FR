@@ -120,7 +120,6 @@ const AddCity = () => {
                             onChange={(e) => setCountry(e.target.value)}
                         />
 
-                        {/* Show error message if there is one */}
                         {error && <p style={{ color: "red" }}>{error}</p>}
 
                         <div style={actionsStyle}>

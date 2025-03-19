@@ -1,16 +1,23 @@
 import React, { useState } from "react";
-
+import countryService from "../../../services/countryService.ts";
 interface EditCountryProps {
-    country: { id: string; country: string };
+    country: { id: string,  country: string };
     onClose: () => void;
     onUpdate: (country: { id: string; country: string }) => void;
 }
 
 const EditCountry = ({ country, onClose, onUpdate }: EditCountryProps) => {
     const [countryName, setCountryName] = useState(country.country);
+    const {edit} = countryService ;
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
         onUpdate({ id: country.id, country: countryName });
+        try {
+            const response = await edit({ id: country.id, country: countryName });
+            console.log("Country updated successfully:", response);
+        } catch (err) {
+            console.error("Error updating country:", err);
+        }
         onClose();
     };
 
