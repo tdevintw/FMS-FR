@@ -1,28 +1,59 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
+import CityService from "../../../services/cityService.ts";
+import CountryService from "../../../services/countryService.ts";
 
 interface EditCityProps {
-    city: { id: number; title: string; country: string };
+    city: {
+        id: string;
+        city: string;
+        countryDTO?: { id: string; country: string };
+    };
+
     onClose: () => void;
-    onUpdate: (city: { id: number; title: string; country: string }) => void;
+    onUpdate: (city: { id: string; city: string; countryId: string ; countryDTO?: { id: string; country: string }; }) => void;
 }
 
-const EditCity = ({ city, onClose, onUpdate }: EditCityProps) => {
-    const [cityName, setCityName] = useState(city.title);
-    const [countryName, setCountryName] = useState(city.country);
 
-    const handleSaveChanges = () => {
-        onUpdate({
-            id: city.id,
-            title: cityName,
-            country: countryName,
-        });
+
+const EditCity = ({city, onClose, onUpdate}: EditCityProps) => {
+    const [cityName, setCityName] = useState(city.city);
+    const [countryId, setCountryId] = useState(city.countryDTO?.id || "");
+    const {edit} = CityService;
+    const {getAll} = CountryService;
+    const [countries, setCountries] = useState<{ id: string; country: string }[]>([]);
+
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const countryList = await getAll();
+                setCountries(countryList);
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        };
+        fetchCountries();
+    }, []);
+
+
+    const handleSaveChanges = async () => {
+        try {
+            await edit({id: city.id, city: cityName, countryId: countryId});
+            const updatedCountry = countries.find(country => country.id === countryId);
+            onUpdate({
+                id: city.id,
+                city: cityName,
+                countryId: countryId,
+                countryDTO: updatedCountry ? { id: updatedCountry.id, country: updatedCountry.country } : undefined
+            });        } catch (err) {
+            console.error("Error updating city:", err);
+        }
         onClose();
     };
 
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
             <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-                <h2 style={{ marginBottom: "2rem" }}>Edit City</h2>
+                <h2 style={{marginBottom: "2rem"}}>Edit City</h2>
                 <input
                     type="text"
                     placeholder="City Name"
@@ -30,13 +61,22 @@ const EditCity = ({ city, onClose, onUpdate }: EditCityProps) => {
                     onChange={(e) => setCityName(e.target.value)}
                     style={inputStyle}
                 />
-                <input
-                    type="text"
-                    placeholder="Country Name"
-                    value={countryName}
-                    onChange={(e) => setCountryName(e.target.value)}
+
+
+
+                <select
+                    value={countryId}
+                    onChange={(e) => setCountryId(e.target.value)}
                     style={inputStyle}
-                />
+                >
+                    <option value="">Select a country</option>
+                    {countries.map(country => (
+                        <option key={country.id} value={country.id}>
+                            {country.country}
+                        </option>
+                    ))}
+                </select>
+
 
                 <div style={actionsStyle}>
                     <button style={saveButtonStyle} onClick={handleSaveChanges}>

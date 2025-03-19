@@ -1,13 +1,47 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import CityService from "../../../services/cityService.ts";
 import CountryService from "../../../services/countryService.ts";
 
 const AddCity = () => {
     const [showModal, setShowModal] = useState(false);
-    const [country, setCountry] = useState("");  // State to capture country input
-    const [loading, setLoading] = useState(false);  // State to manage loading state
-    const [error, setError] = useState("");  // State to capture any error messages
-    const { add } = CountryService;
+    const [city, setCity] = useState("");
+    const [countryId, setCountryId] = useState("");
+    const [countries, setCountries] = useState<{ id: string; country: string }[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const countryList = await CountryService.getAll();
+                setCountries(countryList);
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        };
+        fetchCountries();
+    }, []);
+
+    const handleAddCity = async () => {
+        if (!city.trim() || !countryId.trim()) {
+            setError("City name and country are required.");
+            return;
+        }
+        setLoading(true);
+        setError("");
+
+        try {
+            await CityService.add({ city, countryId });
+            setShowModal(false);
+        } catch (err) {
+            setError("Failed to add city. Please try again.");
+            console.error("Error adding city:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Styles from old component
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
         top: 0,
@@ -25,8 +59,8 @@ const AddCity = () => {
         padding: "20px",
         borderRadius: "8px",
         width: "30rem",
-        marginRight: '0.5rem',
-        marginLeft: '0.5rem',
+        marginRight: "0.5rem",
+        marginLeft: "0.5rem",
         textAlign: "center",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     };
@@ -38,6 +72,11 @@ const AddCity = () => {
         border: "1px solid #ccc",
         borderRadius: "4px",
         fontSize: "16px",
+    };
+
+    const selectStyle: React.CSSProperties = {
+        ...inputStyle,
+        cursor: "pointer",
     };
 
     const actionsStyle: React.CSSProperties = {
@@ -66,26 +105,6 @@ const AddCity = () => {
         color: "white",
     };
 
-    const handleAddCountry = async () => {
-        if (!country.trim()) {
-            setError("Country name is required.");
-            return;
-        }
-        setLoading(true);
-        setError(""); // Reset any previous errors
-
-        try {
-            const response = await add({ country });
-            console.log("Country added successfully:", response);
-            setShowModal(false);  // Close modal on success
-        } catch (err) {
-            setError("Failed to add country. Please try again.");
-            console.error("Error adding country:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     return (
         <div style={{ display: "flex", justifyContent: "end" }}>
             <button
@@ -109,24 +128,36 @@ const AddCity = () => {
             {showModal && (
                 <div style={modalOverlayStyle} onClick={() => setShowModal(false)}>
                     <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-                        <h2 style={{ marginBottom: "2rem" }}>Add Country</h2>
+                        <h2 style={{ marginBottom: "2rem" }}>Add City</h2>
 
-                        {/* Country name input */}
                         <input
                             type="text"
-                            placeholder="Country name"
+                            placeholder="City name"
                             style={inputStyle}
-                            value={country}
-                            onChange={(e) => setCountry(e.target.value)}
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
                         />
+
+                        <select
+                            value={countryId}
+                            onChange={(e) => setCountryId(e.target.value)}
+                            style={selectStyle}
+                        >
+                            <option value="">Select a country</option>
+                            {countries.map(country => (
+                                <option key={country.id} value={country.id}>
+                                    {country.country}
+                                </option>
+                            ))}
+                        </select>
 
                         {error && <p style={{ color: "red" }}>{error}</p>}
 
                         <div style={actionsStyle}>
                             <button
                                 style={addButtonStyle}
-                                onClick={handleAddCountry}
-                                disabled={loading}  // Disable button when loading
+                                onClick={handleAddCity}
+                                disabled={loading}
                             >
                                 {loading ? "Adding..." : "Add"}
                             </button>
