@@ -1,46 +1,142 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
+import cityService from "../../../services/cityService.ts";
+import countryService from "../../../services/countryService.ts";
+import buildingService from "../../../services/buildingService.ts";
 
-interface EditBuildingProps {
-    building: { id: number; name: string ; type : string ; city : string };
-    onClose: () => void;
-    onUpdate: (building: {  id: number; name: string ; type : string ; city : string }) => void;
+interface IUser {
+    id: string;
+    username: string;
+    email: string;
+    role: string;
 }
 
-const EditBuilding = ({ building, onClose, onUpdate }: EditBuildingProps) => {
-    const [buildingName, setBuildingName] = useState(building.name);
-    const [typeName, setTypeName] = useState(building.type);
-    const [cityName, setCityName] = useState(building.city);
+interface ICity {
+    id: string;
+    city: string;
+    country: { id: string; country: string };
+}
 
-    const handleSaveChanges = () => {
-        onUpdate({ id: building.id, name: buildingName , type : typeName , city :cityName });
+
+interface ICountry {
+    id: string;
+    country: string
+}
+
+interface EditBuildingProps {
+    building: {
+        id: string;
+        name: string;
+        city: ICity;
+        buildingType: string;
+        manager: IUser;
+    };
+    onClose: () => void;
+}
+
+const EditBuilding = ({building, onClose}: EditBuildingProps) => {
+
+    const [name, setName] = useState(building.name);
+    const [cityId, setCityId] = useState(building.city.id);
+    const [buildingType, setBuildingType] = useState(building.buildingType);
+    const [cities, setCities] = useState<ICity[]>([]);
+    const [countries, setCountries] = useState<ICountry[]>([]);
+    const [selectedCountry, setSelectedCountry] = useState(building.city.country.id);
+    const CityService = cityService;
+    const CountryService = countryService;
+    const BuildingService = buildingService;
+    useEffect(() => {
+        console.log("buildings : " + JSON.stringify(building));
+        const fetchCities = async () => {
+            try {
+                const cityList = await CityService.getAll();
+                setCities(cityList);
+            } catch (error) {
+                console.error("Error fetching cities:", error);
+            }
+        };
+
+        const fetchCountries = async () => {
+            try {
+                const countryList = await CountryService.getAll();
+                setCountries(countryList);
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        };
+
+        fetchCountries();
+        fetchCities();
+    }, []);
+
+
+    const handleSaveChanges = async () => {
+        await BuildingService.edit({id: building.id, name: name, buildingType: buildingType, cityId: cityId});
         onClose();
     };
+
+
+
 
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
             <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-                <h2 style={{ marginBottom: "2rem" }}>Edit Country</h2>
+                <h2 style={{marginBottom: "2rem"}}>Edit Building</h2>
                 <input
                     type="text"
                     placeholder="Building Name"
-                    value={buildingName}
-                    onChange={(e) => setBuildingName(e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     style={inputStyle}
                 />
-                <input
-                    type="text"
-                    placeholder="Building Type"
-                    value={buildingName}
-                    onChange={(e) => setTypeName(e.target.value)}
+                <select
+                    value={buildingType}
+                    onChange={(e) => setBuildingType(e.target.value)}
+                    style={{
+                        width: "100%",
+                        padding: "10px",
+                        margin: "10px 0",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                    }}
+                >
+                    <option value="">Select a Building Type</option>
+                    <option key="HOTEL" value="HOTEL">
+                        HOTEL
+                    </option>
+                    <option key="MOTEL" value="MOTEL">
+                        MOTEL
+                    </option>
+                    <option key="RESTAURANT" value="RESTAURANT">
+                        RESTAURANT
+                    </option>
+                </select>
+                <select
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
                     style={inputStyle}
-                />
-                <input
-                    type="text"
-                    placeholder="City"
-                    value={cityName}
-                    onChange={(e) => setCityName(e.target.value)}
+                >
+                    {countries.map((country) => (
+                        <option key={country.id} value={country.id}>
+                            {country.country}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    value={cityId}
+                    onChange={(e) => setCityId(e.target.value)}
                     style={inputStyle}
-                />
+                >
+                    <option value="">Select a City</option>
+                    {cities
+                        .filter((city) => city.country.id === selectedCountry)
+                        .map((city) => (
+                            <option key={city.id} value={city.id}>
+                                {city.city}
+                            </option>
+                        ))}
+                </select>
                 <div style={actionsStyle}>
                     <button style={saveButtonStyle} onClick={handleSaveChanges}>
                         Save Changes
