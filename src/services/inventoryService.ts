@@ -112,7 +112,7 @@ const InventoryService = {
         }
 
         try {
-            const response = await axios.get("http://localhost:9999/api/supplierInventories/"+supplierId, {
+            const response = await axios.get("http://localhost:9999/api/supplierInventories/supplier/"+supplierId, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${user.token}`,

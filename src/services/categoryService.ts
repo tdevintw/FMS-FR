@@ -116,6 +116,7 @@ const CategoryService = {
             throw error;
         }
     },
+
     async remove(uuid : string){
         const storedUser = localStorage.getItem('user');
         if (!storedUser) {
@@ -148,7 +149,10 @@ const CategoryService = {
             console.error("Error adding category:", error);
             throw error;
         }
-    }
+    },
+
+
+
 };
 
 export default CategoryService;
