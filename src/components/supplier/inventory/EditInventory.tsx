@@ -60,7 +60,6 @@ const EditInventory = ({inventory, onClose}: EditInventoryProps) => {
         fetchFoods();
         fetchCategories();
     }, []);
-
     const handleSaveChanges = async  () => {
        if(!selectedFood || price<1 ){
            alert("Food is required and price must be at least 1");

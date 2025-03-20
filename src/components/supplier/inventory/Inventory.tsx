@@ -67,7 +67,7 @@ const Inventory = () => {
                             {item.food.food}
                         </td>
                         <td className="p-3" style={{border: "1px solid gray"}}>
-                            {item.price}
+                            {item.price} Dhs
                         </td>
 
                         <td className="p-3 cursor-pointer text-center"

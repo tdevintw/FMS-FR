@@ -57,8 +57,8 @@ const Food = () => {
                     <th className="p-3" style={{ textAlign: "center", width: "20rem", border: "1px solid gray" }}>Image</th>
                     <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Food</th>
                     <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Category</th>
-                    <th className="p-3" style={{ textAlign: "center", border: "1px solid gray" }}>Edit</th>
-                    <th className="p-3" style={{ textAlign: "center", border: "1px solid gray" }}>Remove</th>
+                    <th className="p-3" style={{ textAlign: "center", border: "1px solid gray" , width: "10rem"}}>Edit</th>
+                    <th className="p-3" style={{ textAlign: "center", border: "1px solid gray" ,width: "10rem"}}>Remove</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -78,7 +78,7 @@ const Food = () => {
                         </td>
                         <td className="p-3 cursor-pointer text-center" style={{ border: "1px solid gray", width: "10rem" }}>
                             <img
-                                style={{ width: "2.2rem", cursor: "pointer" }}
+                                style={{ width: "2.2rem", cursor: "pointer", }}
                                 src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
                                 onClick={() => handleRemove(item.id)}
                             />
