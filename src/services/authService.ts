@@ -57,7 +57,7 @@ export const authService = {
         const response = await fetch(`http://localhost:9999/api/auth/reset-password?token=${encodeURIComponent(token)}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ newPassword }) // Ensure correct JSON body format
+            body: JSON.stringify({ newPassword })
         });
         console.log(JSON.stringify({ newPassword }))
         if (!response.ok) {
