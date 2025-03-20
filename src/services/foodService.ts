@@ -17,9 +17,11 @@ const FoodService = {
         if (!user || !user.token) {
             throw new Error('User not authenticated');
         }
-
+console.log(foodName + "    "+ categoryId);
         const formData = new FormData();
-        const foodBlob = new Blob([JSON.stringify({ name: foodName, categoryId })], { type: "application/json" });
+        const foodBlob = new Blob([JSON.stringify({ food: foodName, categoryId })], { type: "application/json" });
+
+       console.log(foodBlob);
         formData.append("food", foodBlob);
         formData.append("image", file);
 
@@ -56,7 +58,7 @@ const FoodService = {
         }
 
         const formData = new FormData();
-        const foodBlob = new Blob([JSON.stringify({ name: foodName, categoryId })], { type: "application/json" });
+        const foodBlob = new Blob([JSON.stringify({ food: foodName, categoryId })], { type: "application/json" });
         formData.append("food", foodBlob);
         if (file) {
             formData.append("image", file);

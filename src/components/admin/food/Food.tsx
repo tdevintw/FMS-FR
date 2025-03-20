@@ -6,7 +6,7 @@ interface FoodItem {
     id: string;
     imageUrl: string;
     food: string;
-    categoryDTO:  {id : string , category:string , imageUrl:string};
+    category:  {id : string , category:string , imageUrl:string};
 }
 
 const Food = () => {
@@ -29,9 +29,13 @@ const Food = () => {
         setSelectedFood(food);
     };
 
-    const handleUpdate = (updatedFood: FoodItem) => {
+    const handleUpdate = (updatedFood: { id: string; food: string; categoryId: string; imageUrl: string }) => {
         setFoods((prevFoods) =>
-            prevFoods.map((food) => (food.id === updatedFood.id ? updatedFood : food))
+            prevFoods.map((food) =>
+                food.id === updatedFood.id
+                    ? { ...food, food: updatedFood.food, categoryDTO: { id: updatedFood.categoryId, category: food.category.category, imageUrl: updatedFood.imageUrl } }
+                    : food
+            )
         );
         setSelectedFood(null);
     };
@@ -64,7 +68,7 @@ const Food = () => {
                             <img style={{ width: "7rem" }} src={item.imageUrl} alt={item.food} />
                         </td>
                         <td className="p-3" style={{ border: "1px solid gray" }}>{item.food}</td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{item.categoryDTO.category}</td>
+                        <td className="p-3" style={{ border: "1px solid gray" }}>{item.category.category}</td>
                         <td className="p-3 cursor-pointer text-center" style={{ border: "1px solid gray", width: "10rem" }}>
                             <img
                                 style={{ width: "2.2rem", cursor: "pointer" }}

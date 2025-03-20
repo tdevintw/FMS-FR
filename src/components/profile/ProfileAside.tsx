@@ -18,7 +18,7 @@ const ProfileAside = () => {
         if (user?.role === "ADMIN") return "/admin";
         if (user?.role === "MANAGER") return "/manager";
         if (user?.role === "SUPPLIER") return "/supplier";
-        return "/profile"; // Default path for other roles
+        return "/profile";
     };
 
     const handleDelete = async () => {
@@ -44,7 +44,7 @@ const ProfileAside = () => {
                     <i className="fa fa-user"></i> Account Details
                 </Link>
                 <Link to={getRolePath()} data-bs-toggle="tab">
-                    <i className="fa fa-dashboard"></i>Dashboard
+                    <i className="fa fa-dashboard"></i>Panel
                 </Link>
 
 
