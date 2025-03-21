@@ -6,18 +6,18 @@ interface EditCityProps {
     city: {
         id: string;
         city: string;
-        countryDTO?: { id: string; country: string };
+        country?: { id: string; country: string };
     };
 
     onClose: () => void;
-    onUpdate: (city: { id: string; city: string; countryId: string ; countryDTO?: { id: string; country: string }; }) => void;
+    onUpdate: (city: { id: string; city: string; countryId: string ; country?: { id: string; country: string }; }) => void;
 }
 
 
 
 const EditCity = ({city, onClose, onUpdate}: EditCityProps) => {
     const [cityName, setCityName] = useState(city.city);
-    const [countryId, setCountryId] = useState(city.countryDTO?.id || "");
+    const [countryId, setCountryId] = useState(city.country?.id || "");
     const {edit} = CityService;
     const {getAll} = CountryService;
     const [countries, setCountries] = useState<{ id: string; country: string }[]>([]);
@@ -43,7 +43,7 @@ const EditCity = ({city, onClose, onUpdate}: EditCityProps) => {
                 id: city.id,
                 city: cityName,
                 countryId: countryId,
-                countryDTO: updatedCountry ? { id: updatedCountry.id, country: updatedCountry.country } : undefined
+                country: updatedCountry ? { id: updatedCountry.id, country: updatedCountry.country } : undefined
             });        } catch (err) {
             console.error("Error updating city:", err);
         }

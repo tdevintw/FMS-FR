@@ -5,7 +5,7 @@ import CityService from "../../../services/cityService.ts";
 interface ICity {
     id: string;
     city: string;
-    countryDTO?: { id: string; country: string };
+    country?: { id: string; country: string };
 }
 
 
@@ -19,6 +19,7 @@ const City = () => {
         const fetchCities = async () => {
             try {
                 const cityList: ICity[] = await getAll();
+                console.log("cities : " + JSON.stringify(cityList));
                 setCities(cityList);
             } catch (error) {
                 console.error("Error fetching cities or countries:", error);
@@ -61,7 +62,7 @@ const City = () => {
                 {cities.map((item) => (
                     <tr key={item.id} className="border-t">
                         <td className="p-3" style={{border: "1px solid gray"}}>{item.city}</td>
-                        <td className="p-3" style={{border: "1px solid gray"}}>{item.countryDTO?.country}</td>
+                        <td className="p-3" style={{border: "1px solid gray"}}>{item.country?.country}</td>
                         <td className="p-3 text-center" style={{border: "1px solid gray", width: "10rem"}}>
                             <img
                                 style={{width: "2.2rem", cursor: "pointer"}}
