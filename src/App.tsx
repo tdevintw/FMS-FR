@@ -23,6 +23,7 @@ import InventoryPage from "./pages/supplier/InventoryPage.tsx";
 import OrderPage from "./pages/manager/OrderPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import ContactUs from "./pages/ContactUs.tsx";
+import OrderFoodPage from "./pages/manager/OrderFoodPage.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
     const {user} = useAuth();
@@ -42,6 +43,7 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path="/login" element={<PublicRoute element={<LoginPage/>}/>}/>
                         <Route path="/order" element={<OrderPage />}/>
+                        <Route path="/order/food" element={<OrderFoodPage />}/>
                         <Route path="/about" element={<AboutPage />}/>
                         <Route path="/contact-us" element={<ContactUs />}/>
                         <Route path="/register" element={<PublicRoute element={<RegisterPage/>}/>}/>
