@@ -4,7 +4,6 @@ import {useAuth} from "../../context/AuthContext.tsx";
 const Header = () => {
 
     const  {user} = useAuth() ;
-
     return (
         <header className="main-header-area">
             <div className="main-header">
@@ -24,7 +23,7 @@ const Header = () => {
                                     <nav className="main-nav d-flex justify-content-center">
                                         <ul className="nav">
                                             <li>
-                                                <Link to="/" className="active">
+                                                <Link to="/">
                                                     <span className="menu-text"> Home</span>
                                                 </Link>
                                             </li>
@@ -35,6 +34,23 @@ const Header = () => {
                                                     </Link>
                                                 </li>
                                             )}
+                                                <li>
+                                                    <Link to={"/order"}>
+                                                        <span className="menu-text">Order</span>
+                                                    </Link>
+                                                </li>
+
+                                            <li>
+                                                <Link to="/about" >
+                                                    <span className="menu-text">About</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/contact-us" >
+                                                    <span className="menu-text">Contact us</span>
+                                                </Link>
+                                            </li>
+
 
                                         </ul>
                                     </nav>
