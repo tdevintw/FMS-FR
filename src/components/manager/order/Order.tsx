@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import foodService from "../../../services/foodService.ts";
 import categoryService from "../../../services/categoryService.ts";
+import {Link} from "react-router-dom";
 
 interface FoodItem {
     id: string;
@@ -100,7 +101,7 @@ const Order = () => {
                                 <div className="col-xxl-3 col-lg-4 col-md-6 col-sm-6 col-custom product-area">
                                     <div className="single-product position-relative">
                                         <div className="product-image">
-                                            <a className="d-block" href="product-details.html" style={{
+                                            <Link className="d-block" to={`food/${item.id}`} style={{
                                                 display: 'block',
                                                 position: 'relative',
                                                 width: '100%',
@@ -121,7 +122,7 @@ const Order = () => {
                                                     objectPosition: 'center'
                                                 }} src={item.category.imageUrl} alt=""
                                                      className="product-image-2 position-absolute w-100"/>
-                                            </a>
+                                            </Link>
                                         </div>
                                         <div className="product-content" style={{paddingTop: '20px'}}>
                                             <div className="product-title">

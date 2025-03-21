@@ -43,7 +43,7 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path="/login" element={<PublicRoute element={<LoginPage/>}/>}/>
                         <Route path="/order" element={<OrderPage />}/>
-                        <Route path="/order/food" element={<OrderFoodPage />}/>
+                        <Route path="/order/food/:id" element={<OrderFoodPage />}/>
                         <Route path="/about" element={<AboutPage />}/>
                         <Route path="/contact-us" element={<ContactUs />}/>
                         <Route path="/register" element={<PublicRoute element={<RegisterPage/>}/>}/>
