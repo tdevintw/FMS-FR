@@ -9,7 +9,7 @@ interface User {
 
 interface UpdateUserData {
     username?: string;
-    password?: string; // Allow password updates, but don't store it in the user state
+    password?: string;
 }
 
 interface UserContextType {
@@ -24,7 +24,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        // Fetch user data when the app loads
         const fetchUser = async () => {
             try {
                 const userData = await UserService.getUser();

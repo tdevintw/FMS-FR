@@ -1,8 +1,7 @@
-import React, {JSX} from "react";
-import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
-import {AuthProvider, useAuth} from "./context/AuthContext";
-import {UserProvider} from "./context/UserContext";
-
+import React, { JSX } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import {UserProvider, useUser} from "./context/UserContext";
 import "./App.css";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
@@ -21,122 +20,60 @@ import CountryPage from "./pages/admin/CountryPage.tsx";
 import BuildingPage from "./pages/manager/BuildingPage.tsx";
 import InventoryPage from "./pages/supplier/InventoryPage.tsx";
 
-const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
-    const {user} = useAuth();
-    return user ? <Navigate to="/profile" replace/> : element;
+
+const PublicRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
+    const { user } = useAuth();
+    return user ? <Navigate to="/profile" replace /> : element;
 };
 
-const ProtectedRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
-    const {user} = useAuth();
-    return user ? element : <Navigate to="/login" replace/>;
+const ProtectedRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
+    const { user } = useAuth();
+    return user ? element : <Navigate to="/login" replace />;
+};
+
+const ProtectedRouteAdmin: React.FC<{ element: JSX.Element }> = ({ element }) => {
+    const { user } = useUser();
+    return user?.role === "ADMIN" ? element : <Navigate to="/404" replace />;
+};
+
+const ProtectedRouteManager: React.FC<{ element: JSX.Element }> = ({ element }) => {
+    const { user } = useAuth();
+    return user?.role === "MANAGER" ? element :<Navigate to="/404" replace />;
+};
+
+const ProtectedRouteSupplier: React.FC<{ element: JSX.Element }> = ({ element }) => {
+    const { user } = useAuth();
+    return user?.role === "SUPPLIER" ? element : <Navigate to="/404" replace />;
 };
 
 const App: React.FC = () => {
     return (
         <AuthProvider>
-            <Router>
-                <div className="app-container">
-                    <Routes>
-                        <Route path="/login" element={<PublicRoute element={<LoginPage/>}/>}/>
-                        <Route path="/register" element={<PublicRoute element={<RegisterPage/>}/>}/>
-                        <Route path="/forget-password" element={<PublicRoute element={<ForgetPasswordPage/>}/>}/>
-                        <Route path="/reset-password" element={<PublicRoute element={<ResetPasswordPage/>}/>}/>
-                        <Route path="/profile" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <ProfilePage/>
-                                </UserProvider>
-                            }/>
-                        }/>
-
-                        <Route path="/admin" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <AdminDashboardPage/>
-                                </UserProvider>
-                            }/>
-                        }/>
-
-
-                        <Route path="/manager" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <ManagerDashboardPage/>
-                                </UserProvider>
-                            }/>
-                        }/>
-
-                        <Route path="/supplier" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <SupplierDashboardPage/>
-                                </UserProvider>
-                            }/>
-
-                        }/>
-
-                        <Route path="/admin/categories" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <CategoryPage/>
-                                </UserProvider>
-                            }/>
-
-                        }/>
-
-                        <Route path="/admin/foods" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <FoodPage/>
-                                </UserProvider>
-                            }/>
-
-                        }/>
-
-                        <Route path="/admin/countries" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <CountryPage/>
-                                </UserProvider>
-                            }/>
-
-                        }/>
-
-                        <Route path="/admin/cities" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <CityPage/>
-                                </UserProvider>
-                            }/>
-
-                        }/>
-
-                        <Route path="/manager/buildings" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <BuildingPage/>
-                                </UserProvider>
-                            }/>
-
-                        }/>
-                        <Route path="/supplier/inventories" element={
-                            <ProtectedRoute element={
-                                <UserProvider>
-                                    <InventoryPage/>
-                                </UserProvider>
-                            }/>
-
-                        }/>
-
-
-                        <Route path="/" element={<HomePage/>}/>
-
-                        <Route path="*" element={<NotFoundPage/>}/>
-                    </Routes>
-                </div>
-            </Router>
+            <UserProvider>
+                <Router>
+                    <div className="app-container">
+                        <Routes>
+                            <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
+                            <Route path="/register" element={<PublicRoute element={<RegisterPage />} />} />
+                            <Route path="/forget-password" element={<PublicRoute element={<ForgetPasswordPage />} />} />
+                            <Route path="/reset-password" element={<PublicRoute element={<ResetPasswordPage />} />} />
+                            <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
+                            <Route path="/admin" element={<ProtectedRouteAdmin element={<AdminDashboardPage />} />} />
+                            <Route path="/manager" element={<ProtectedRouteManager element={<ManagerDashboardPage />} />} />
+                            <Route path="/supplier" element={<ProtectedRouteSupplier element={<SupplierDashboardPage />} />} />
+                            <Route path="/admin/categories" element={<ProtectedRouteAdmin element={<CategoryPage />} />} />
+                            <Route path="/admin/foods" element={<ProtectedRouteAdmin element={<FoodPage />} />} />
+                            <Route path="/admin/countries" element={<ProtectedRouteAdmin element={<CountryPage />} />} />
+                            <Route path="/admin/cities" element={<ProtectedRouteAdmin element={<CityPage />} />} />
+                            <Route path="/manager/buildings" element={<ProtectedRouteManager element={<BuildingPage />} />} />
+                            <Route path="/supplier/inventories" element={<ProtectedRouteSupplier element={<InventoryPage />} />} />
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                    </div>
+                </Router>
+            </UserProvider>
         </AuthProvider>
     );
 };
-
 export default App;

@@ -1,13 +1,11 @@
-import {Link, useNavigate} from "react-router-dom";
-import {useAuth} from "../../context/AuthContext.tsx";
-import {useUser} from "../../context/UserContext.tsx";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.tsx";
+import { useUser } from "../../context/UserContext.tsx";
 
 const ProfileAside = () => {
-    const {deleteUser , user} = useUser();
-
-    const {logout} = useAuth();
+    const { deleteUser, user } = useUser();
+    const { logout } = useAuth();
     const navigate = useNavigate();
-
 
     const handleLogout = () => {
         logout();
@@ -40,13 +38,12 @@ const ProfileAside = () => {
     return (
         <div className="col-lg-3 col-md-4 col-custom">
             <div className="myaccount-tab-menu nav" role="tablist">
-                <Link to={"/profile"} data-bs-toggle="tab">
+                <Link to="/profile">
                     <i className="fa fa-user"></i> Account Details
                 </Link>
-                <Link to={getRolePath()} data-bs-toggle="tab">
-                    <i className="fa fa-dashboard"></i>Panel
+                <Link to={getRolePath()}>
+                    <i className="fa fa-dashboard"></i> Panel
                 </Link>
-
 
                 <a onClick={handleDelete}>
                     <i className="fa fa-trash"></i> Delete Account
@@ -57,6 +54,6 @@ const ProfileAside = () => {
             </div>
         </div>
     );
-}
+};
 
 export default ProfileAside;
