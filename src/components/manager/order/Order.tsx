@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import foodService from "../../../services/foodService.ts";
 import categoryService from "../../../services/categoryService.ts";
 
@@ -23,6 +23,7 @@ const Order = () => {
     const FoodService = foodService;
     const CategoryService = categoryService;
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedFood, setSelectedFood] = useState("");
 
     useEffect(() => {
         const fetchFoods = async () => {
@@ -47,12 +48,22 @@ const Order = () => {
         fetchCategories();
     }, []);
 
-    const handleChange = ( event : React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedCategory(event.target.value);
     };
 
 
-    const filteredFoods = selectedCategory.length>0 ? foods.filter(food=> food.category.id===selectedCategory) : foods;
+    const filteredFoods = foods.filter(food => {
+        if (selectedCategory && selectedFood) {
+            return food.category.id === selectedCategory && food.food.toLowerCase().includes(selectedFood.toLowerCase());
+        } else if (selectedCategory) {
+            return food.category.id === selectedCategory;
+        } else if (selectedFood) {
+            return food.food.toLowerCase().includes(selectedFood.toLowerCase());
+        }
+        return true;
+    });
+
 
 
     return (
@@ -60,15 +71,23 @@ const Order = () => {
             <div className="container container-default custom-area">
                 <div className="row flex-row-reverse">
                     <div className="col-12 col-custom widget-mt">
-                        <div className="shop_toolbar_wrapper justify-content-end gap-2">
+                        <div className="shop_toolbar_wrapper justify-content-between gap-2">
+                            <div>
+                                <input
+                                    type={"text"}
+                                    placeholder={"Search Food"} style={{borderColor: '1px solid gray'}}
+                                    onChange={(e) => setSelectedFood(e.target.value)}
+
+                                />
+                            </div>
                             <div className="shop-select">
                                 <form className="d-flex flex-column w-100" action="#">
                                     <div className="form-group">
-                                        <select  className="form-control nice-select w-100" onChange={handleChange}
-                                                style={{textAlign: "center",cursor : 'pointer'}}>
+                                        <select className="form-control nice-select w-100" onChange={handleChange}
+                                                style={{textAlign: "center", cursor: 'pointer'}}>
                                             <option selected value="">Select Category</option>
                                             {categories.map(item => (
-                                                <option  value={item.id}>{item.category}</option>
+                                                <option value={item.id}>{item.category}</option>
                                             ))}
                                         </select>
                                     </div>
