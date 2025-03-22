@@ -14,7 +14,7 @@ const Header = () => {
                                 <div className="col-lg-2 col-xl-2 col-sm-6 col-6 col-custom">
                                     <div className="header-logo d-flex align-items-center">
                                         <Link to={"/"}>
-                                            <img className="img-full" src="../src/assets/images/logo/logo2.png" alt="Header Logo" />
+                                            <img className="img-full" src="https://i.ibb.co/fYKCLGJk/logo2.png" alt="Header Logo" />
                                         </Link>
                                     </div>
                                 </div>
