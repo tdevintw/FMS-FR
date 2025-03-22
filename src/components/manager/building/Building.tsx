@@ -22,6 +22,7 @@ interface IBuilding {
     name: string,
     city: ICity,
     buildingType : string ,
+    address : string
     manager : IUser,
 }
 
@@ -37,6 +38,7 @@ const Building = () => {
         const fetchCities = async () => {
             try {
                 const buildingList: IBuilding[] = await BuildingService.getAll();
+                console.log(buildingList);
                 setBuildings(buildingList);
             } catch (error) {
                 console.error("Error fetching buildings:", error);
@@ -69,6 +71,8 @@ const Building = () => {
                     </th>
                     <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">City
                     </th>
+                    <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">Address
+                    </th>
                     <th style={{textAlign: "center", border: "1px solid gray"}} className="p-3">Edit</th>
                     <th style={{textAlign: "center", border: "1px solid gray"}} className="p-3">Remove</th>
                 </tr>
@@ -84,6 +88,9 @@ const Building = () => {
                         </td>
                         <td className="p-3" style={{border: "1px solid gray"}}>
                             {building.city.city}
+                        </td>
+                        <td className="p-3" style={{border: "1px solid gray"}}>
+                            {building.address}
                         </td>
                         <td className="p-3 cursor-pointer text-center"
                             style={{border: "1px solid gray", width: "10rem"}}>

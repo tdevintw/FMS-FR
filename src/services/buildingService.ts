@@ -12,7 +12,7 @@ const getUserIdFromToken = (token: string): string | null => {
 
 
 const BuildingService = {
-    async add( name: string, buildingType: string, cityId: string ) {
+    async add( name: string, buildingType: string, cityId: string , address : string ) {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
             throw new Error("User not authenticated");
@@ -33,7 +33,7 @@ const BuildingService = {
         if (!managerId) {
             throw new Error("Invalid or missing user ID in token");
         }
-         const data = {name : name , buildingType : buildingType , cityId : cityId , managerId : managerId};
+         const data = {name : name , buildingType : buildingType , cityId : cityId , managerId : managerId , address : address};
 
         const response = await fetch("http://localhost:9999/api/buildings", {
             method: "POST",
@@ -79,7 +79,7 @@ const BuildingService = {
         return response.json();
     },
 
-    async edit(data: { id: string; name: string; buildingType: string; cityId: string }) {
+    async edit(data: { id: string; name: string; buildingType: string; cityId: string , address : string }) {
         console.log("Editing data:", data);
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
@@ -139,8 +139,7 @@ const BuildingService = {
                 Authorization: `Bearer ${user.token}`,
             },
         });
-
-        return response.json();
+            return response.json();
     },
 
     async get(id: string) {

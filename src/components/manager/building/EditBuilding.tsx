@@ -29,6 +29,7 @@ interface EditBuildingProps {
         city: ICity;
         buildingType: string;
         manager: IUser;
+        address : string
     };
     onClose: () => void;
 }
@@ -36,6 +37,7 @@ interface EditBuildingProps {
 const EditBuilding = ({building, onClose}: EditBuildingProps) => {
 
     const [name, setName] = useState(building.name);
+    const [address , setAddress] = useState(building.address);
     const [cityId, setCityId] = useState(building.city.id);
     const [buildingType, setBuildingType] = useState(building.buildingType);
     const [cities, setCities] = useState<ICity[]>([]);
@@ -70,7 +72,7 @@ const EditBuilding = ({building, onClose}: EditBuildingProps) => {
 
 
     const handleSaveChanges = async () => {
-        await BuildingService.edit({id: building.id, name: name, buildingType: buildingType, cityId: cityId});
+        await BuildingService.edit({id: building.id, name: name, buildingType: buildingType, cityId: cityId , address : address});
         onClose();
     };
 
@@ -88,6 +90,21 @@ const EditBuilding = ({building, onClose}: EditBuildingProps) => {
                     onChange={(e) => setName(e.target.value)}
                     style={inputStyle}
                 />
+                <textarea
+                    placeholder="Enter address"
+                    style={{
+                        width: "100%",
+                        padding: "10px",
+                        margin: "10px 0",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                        fontSize: "16px",
+                        minHeight: "80px",
+                        resize: "vertical",
+                    }}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                >{building.address}</textarea>
                 <select
                     value={buildingType}
                     onChange={(e) => setBuildingType(e.target.value)}

@@ -8,7 +8,7 @@ import BuildingService from "../../../services/buildingService.ts";
 interface ICity {
     id: string;
     city: string;
-    countryDTO?: { id: string; country: string };
+    country: { id: string; country: string };
 }
 
 
@@ -20,6 +20,7 @@ interface ICountry {
 const AddBuilding = () => {
     const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState("");
+    const [address, setAddress] = useState("");
     const [cityId, setCityId] = useState("");
     const [buildingType, setBuildingType] = useState("");
     const [cities, setCities] = useState<ICity[]>([]);
@@ -53,17 +54,17 @@ const AddBuilding = () => {
 
 
     const filteredCities = selectedCountry
-        ? cities.filter((city) => city.countryDTO?.id === selectedCountry)
+        ? cities.filter((city) => city.country.id === selectedCountry)
         : [];
 
     const handleAddInventory = async () => {
-        if (!cityId.trim() || !buildingType.trim() || !name.trim()) {
+        if (!cityId.trim() || !buildingType.trim() || !name.trim() || !address.trim()) {
             alert("All fields are required and price must be positive.");
             return;
         }
 
         try {
-            await BuildingService.add(name, buildingType, cityId);
+            await BuildingService.add(name, buildingType, cityId , address);
             setShowModal(false);
         } catch (error) {
             console.error("Error adding inventory:", error);
@@ -160,6 +161,22 @@ const AddBuilding = () => {
                             onChange={(e) => setName(e.target.value)}
 
                         />
+                        <textarea
+                            placeholder="Enter address"
+                            style={{
+                                width: "100%",
+                                padding: "10px",
+                                margin: "10px 0",
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                                fontSize: "16px",
+                                minHeight: "80px",
+                                resize: "vertical",
+                            }}
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                        ></textarea>
+
                         <select
                             value={buildingType}
                             onChange={(e) => setBuildingType(e.target.value)}
