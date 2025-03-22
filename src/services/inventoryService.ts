@@ -51,7 +51,7 @@ const InventoryService = {
         }
     },
 
-    async edit(foodId: string, price: number, uuid: string) {
+    async edit(foodId: string, price: number, uuid: string , cityId: string) {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
             throw new Error("User not authenticated");
@@ -73,7 +73,7 @@ const InventoryService = {
             throw new Error("Invalid or missing user ID in token");
         }
 
-        const inventoryData = { foodId, price, supplierId };
+        const inventoryData = { foodId, price, supplierId,cityId};
 
         try {
             const response = await axios.put(`http://localhost:9999/api/supplierInventories/${uuid}`, inventoryData, {

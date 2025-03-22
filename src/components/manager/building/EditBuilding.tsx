@@ -29,7 +29,8 @@ interface EditBuildingProps {
         city: ICity;
         buildingType: string;
         manager: IUser;
-        address : string
+        address : string;
+
     };
     onClose: () => void;
 }

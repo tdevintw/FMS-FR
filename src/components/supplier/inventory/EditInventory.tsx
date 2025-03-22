@@ -1,7 +1,9 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import foodService from "../../../services/foodService.ts";
 import categoryService from "../../../services/categoryService.ts";
 import inventoryService from "../../../services/inventoryService.ts";
+import cityService from "../../../services/cityService.ts";
+import countryService from "../../../services/countryService.ts";
 
 interface EditInventoryProps {
     inventory: {
@@ -12,7 +14,8 @@ interface EditInventoryProps {
             food: string,
             imageUrl: string,
             category: { id: string, category: string, imageUrl: string };
-        };
+        },
+        city : ICity,
     };
     onClose: () => void;
 }
@@ -30,6 +33,21 @@ interface ICategory {
     imageUrl: string;
 }
 
+interface ICity {
+    id: string;
+    city: string;
+    country: { id: string; country: string };
+}
+
+
+interface ICountry {
+    id: string;
+    country: string
+}
+
+
+
+
 const EditInventory = ({inventory, onClose}: EditInventoryProps) => {
     const [foods, setFoods] = useState<FoodItem[]>([]);
     const [categories, setCategories] = useState<ICategory[]>([]);
@@ -37,6 +55,12 @@ const EditInventory = ({inventory, onClose}: EditInventoryProps) => {
     const [selectedCategory, setSelectedCategory] = useState<string>(inventory.food.category.id);
     const [price, setPrice] = useState<number>(inventory.price);
     const InventoryService = inventoryService;
+    const [cityId, setCityId] = useState(inventory.city.id);
+    const [cities, setCities] = useState<ICity[]>([]);
+    const [countries, setCountries] = useState<ICountry[]>([]);
+    const [selectedCountry, setSelectedCountry] = useState(inventory.city.country.id);
+    const CityService = cityService;
+    const CountryService = countryService;
 
     useEffect(() => {
         const fetchFoods = async () => {
@@ -57,14 +81,34 @@ const EditInventory = ({inventory, onClose}: EditInventoryProps) => {
             }
         };
 
+        const fetchCities = async () => {
+            try {
+                const cityList = await CityService.getAll();
+                setCities(cityList);
+            } catch (error) {
+                console.error("Error fetching cities:", error);
+            }
+        };
+
+        const fetchCountries = async () => {
+            try {
+                const countryList = await CountryService.getAll();
+                setCountries(countryList);
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        };
+
+        fetchCountries();
+        fetchCities();
         fetchFoods();
         fetchCategories();
     }, []);
     const handleSaveChanges = async  () => {
-       if(!selectedFood || price<1 ){
+       if(!selectedFood || price<1 || !cityId){
            alert("Food is required and price must be at least 1");
        }
-        await InventoryService.edit(selectedFood , price ,inventory.id );
+        await InventoryService.edit(selectedFood , price ,inventory.id ,cityId);
         onClose();
     };
 
@@ -108,7 +152,31 @@ const EditInventory = ({inventory, onClose}: EditInventoryProps) => {
                     onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                     style={inputStyle}
                 />
-
+                <select
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                    style={inputStyle}
+                >
+                    {countries.map((country) => (
+                        <option key={country.id} value={country.id}>
+                            {country.country}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    value={cityId}
+                    onChange={(e) => setCityId(e.target.value)}
+                    style={inputStyle}
+                >
+                    <option value="">Select a City</option>
+                    {cities
+                        .filter((city) => city.country.id === selectedCountry)
+                        .map((city) => (
+                            <option key={city.id} value={city.id}>
+                                {city.city}
+                            </option>
+                        ))}
+                </select>
                 <div style={actionsStyle}>
                     <button style={saveButtonStyle} onClick={handleSaveChanges}>
                         Save Changes
