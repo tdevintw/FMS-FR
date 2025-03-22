@@ -12,7 +12,7 @@ const getUserIdFromToken = (token: string): string | null => {
 };
 
 const InventoryService = {
-    async add(foodId: string, price: number) {
+    async add(foodId: string, price: number , cityId : string) {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
             throw new Error("User not authenticated");
@@ -34,7 +34,7 @@ const InventoryService = {
             throw new Error("Invalid or missing user ID in token");
         }
 
-        const inventoryData = { foodId, price, supplierId };
+        const inventoryData = { foodId, price, supplierId , cityId };
 
         try {
             const response = await axios.post("http://localhost:9999/api/supplierInventories", inventoryData, {

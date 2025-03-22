@@ -1,7 +1,9 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import foodService from "../../../services/foodService.ts";
 import inventoryService from "../../../services/inventoryService.ts";
-import categoryService from "../../../services/categoryService.ts"; // Assuming you have a category service
+import categoryService from "../../../services/categoryService.ts";
+import cityService from "../../../services/cityService.ts";
+import countryService from "../../../services/countryService.ts"; // Assuming you have a category service
 
 interface FoodItem {
     id: string;
@@ -16,6 +18,19 @@ interface ICategory {
     imageUrl: string;
 }
 
+interface ICity {
+    id: string;
+    city: string;
+    country: { id: string; country: string };
+}
+
+
+interface ICountry {
+    id: string;
+    country: string
+}
+
+
 const AddInventory = () => {
     const [showModal, setShowModal] = useState(false);
     const [price, setPrice] = useState(0);
@@ -23,6 +38,13 @@ const AddInventory = () => {
     const [foods, setFoods] = useState<FoodItem[]>([]);
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [cityId, setCityId] = useState("");
+    const [cities, setCities] = useState<ICity[]>([]);
+    const [countries, setCountries] = useState<ICountry[]>([]);
+    const [selectedCountry, setSelectedCountry] = useState("");
+    const CityService = cityService;
+    const CountryService = countryService;
+
 
     useEffect(() => {
         const fetchFoods = async () => {
@@ -43,22 +65,48 @@ const AddInventory = () => {
             }
         };
 
+        const fetchCities = async () => {
+            try {
+                const cityList = await CityService.getAll();
+                setCities(cityList);
+            } catch (error) {
+                console.error("Error fetching cities:", error);
+            }
+        };
+
+        const fetchCountries = async () => {
+            try {
+                const countryList = await CountryService.getAll();
+                setCountries(countryList);
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        };
+
+        fetchCountries();
+        fetchCities();
         fetchFoods();
         fetchCategories();
     }, []);
+
+    const filteredCities = selectedCountry
+        ? cities.filter((city) => city.country.id === selectedCountry)
+        : [];
+
+
 
     const filteredFoods = selectedCategory
         ? foods.filter((food) => food.category.id === selectedCategory)
         : foods;
 
     const handleAddInventory = async () => {
-        if (!foodId.trim() || price <= 0) {
+        if (!foodId.trim() || price <= 0 || !cityId) {
             alert("All fields are required and price must be positive.");
             return;
         }
 
         try {
-            await inventoryService.add(foodId, price);
+            await inventoryService.add(foodId, price , cityId);
             setShowModal(false);
         } catch (error) {
             console.error("Error adding inventory:", error);
@@ -115,7 +163,6 @@ const AddInventory = () => {
                     >
                         <h2 style={{ marginBottom: "2rem" }}>Add Inventory</h2>
 
-                        {/* Category Dropdown */}
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -171,6 +218,46 @@ const AddInventory = () => {
                             }}
                             onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                         />
+                        <select
+                            value={selectedCountry}
+                            onChange={(e) => setSelectedCountry(e.target.value)}
+                            style={{
+                                width: "100%",
+                                padding: "10px",
+                                margin: "10px 0",
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                                fontSize: "16px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            <option value="">Select a country</option>
+                            {countries.map((country) => (
+                                <option key={country.id} value={country.id}>
+                                    {country.country}
+                                </option>
+                            ))}
+                        </select>
+                        <select
+                            value={cityId}
+                            onChange={(e) => setCityId(e.target.value)}
+                            style={{
+                                width: "100%",
+                                padding: "10px",
+                                margin: "10px 0",
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                                fontSize: "16px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            <option value="">Select a City</option>
+                            {filteredCities.map((city) => (
+                                <option key={city.id} value={city.id}>
+                                    {city.city}
+                                </option>
+                            ))}
+                        </select>
 
                         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
                             <button

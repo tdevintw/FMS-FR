@@ -3,6 +3,13 @@ import inventoryService from "../../../services/inventoryService.ts";
 import EditInventory from "./EditInventory.tsx";
 
 
+interface ICity {
+    id: string;
+    city: string;
+    country: { id: string; country: string };
+}
+
+
 interface InventoryItem {
     id: string;
     price: number;
@@ -11,11 +18,13 @@ interface InventoryItem {
         id: string, food: string, imageUrl: string,
         category: { id: string, category: string, imageUrl: string }
     };
+
+    city: ICity;
 }
 
 
 const Inventory = () => {
-    const [inventories , setInventories] = useState<InventoryItem[]>([]);
+    const [inventories, setInventories] = useState<InventoryItem[]>([]);
     const [selectedInventory, setSelectedInventory] = useState<InventoryItem | null>(null);
     const InventoryService = inventoryService;
     const [editModalOpen, setEditModalOpen] = useState(false);
@@ -33,9 +42,6 @@ const Inventory = () => {
     }, []);
 
 
-
-
-
     const handleRemove = async (id: string) => {
         try {
             await InventoryService.remove(id);
@@ -44,7 +50,6 @@ const Inventory = () => {
             console.error("Error removing inventory:", error);
         }
     };
-
 
 
     return (
@@ -56,8 +61,14 @@ const Inventory = () => {
                     </th>
                     <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">Price
                     </th>
-                    <th style={{textAlign: "center", border: "1px solid gray", width :"10rem"}} className="p-3">Edit</th>
-                    <th style={{textAlign: "center", border: "1px solid gray", width :"10rem"}} className="p-3">Remove</th>
+                    <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">City
+                    </th>
+                    <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">Country
+                    </th>
+                    <th style={{textAlign: "center", border: "1px solid gray", width: "10rem"}} className="p-3">Edit
+                    </th>
+                    <th style={{textAlign: "center", border: "1px solid gray", width: "10rem"}} className="p-3">Remove
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -69,7 +80,12 @@ const Inventory = () => {
                         <td className="p-3" style={{border: "1px solid gray"}}>
                             {item.price} Dhs
                         </td>
-
+                        <td className="p-3" style={{border: "1px solid gray"}}>
+                            {item.city.city}
+                        </td>
+                        <td className="p-3" style={{border: "1px solid gray"}}>
+                            {item.city.country.country}
+                        </td>
                         <td className="p-3 cursor-pointer text-center"
                             style={{border: "1px solid gray", width: "10rem"}}>
                             <img
@@ -83,7 +99,7 @@ const Inventory = () => {
                         </td>
                         <td className="p-3 cursor-pointer text-center"
                             style={{border: "1px solid gray", width: "10rem"}}>
-                            <img style={{width: "2.2rem" , cursor : "pointer"}}
+                            <img style={{width: "2.2rem", cursor: "pointer"}}
                                  src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
                                  onClick={() => handleRemove(item.id)}
                             />
