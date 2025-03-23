@@ -6,7 +6,7 @@ interface FoodItem {
     id: string;
     imageUrl: string;
     food: string;
-    category:  {id : string , category:string , imageUrl:string};
+    category: { id: string; category: string; imageUrl: string };
 }
 
 const Food = () => {
@@ -25,15 +25,19 @@ const Food = () => {
         fetchFoods();
     }, []);
 
-    const handleEdit = (food: FoodItem) => {
-        setSelectedFood(food);
-    };
-
     const handleUpdate = (updatedFood: { id: string; food: string; categoryId: string; imageUrl: string }) => {
         setFoods((prevFoods) =>
             prevFoods.map((food) =>
                 food.id === updatedFood.id
-                    ? { ...food, food: updatedFood.food, categoryDTO: { id: updatedFood.categoryId, category: food.category.category, imageUrl: updatedFood.imageUrl } }
+                    ? {
+                        ...food,
+                        food: updatedFood.food,
+                        category: {
+                            id: updatedFood.categoryId,
+                            category: food.category.category,
+                            imageUrl: updatedFood.imageUrl
+                        }
+                    }
                     : food
             )
         );
@@ -50,43 +54,48 @@ const Food = () => {
     };
 
     return (
-        <div>
-            <table className="w-full border border-gray-200 text-left">
-                <thead>
-                <tr className="bg-gray-100">
-                    <th className="p-3" style={{ textAlign: "center", width: "20rem", border: "1px solid gray" }}>Image</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Food</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Category</th>
-                    <th className="p-3" style={{ textAlign: "center", border: "1px solid gray" , width: "10rem"}}>Edit</th>
-                    <th className="p-3" style={{ textAlign: "center", border: "1px solid gray" ,width: "10rem"}}>Remove</th>
-                </tr>
-                </thead>
-                <tbody>
-                {foods.map((item) => (
-                    <tr key={item.id} className="border-t">
-                        <td className="p-3 text-center" style={{ border: "1px solid gray" }}>
-                            <img style={{ width: "7rem" }} src={item.imageUrl} alt={item.food} />
-                        </td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{item.food}</td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{item.category.category}</td>
-                        <td className="p-3 cursor-pointer text-center" style={{ border: "1px solid gray", width: "10rem" }}>
-                            <img
-                                style={{ width: "2.2rem", cursor: "pointer" }}
-                                src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
-                                onClick={() => handleEdit(item)}
-                            />
-                        </td>
-                        <td className="p-3 cursor-pointer text-center" style={{ border: "1px solid gray", width: "10rem" }}>
-                            <img
-                                style={{ width: "2.2rem", cursor: "pointer", }}
-                                src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
-                                onClick={() => handleRemove(item.id)}
-                            />
-                        </td>
+        <div className="container mt-4">
+            <div className="table-responsive">
+                <table className="table table-bordered table-hover">
+                    <thead className="table-light text-center">
+                    <tr>
+                        <th style={{ width: "20rem" }}>Image</th>
+                        <th>Food</th>
+                        <th>Category</th>
+                        <th style={{ width: "10rem" }}>Edit</th>
+                        <th style={{ width: "10rem" }}>Remove</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {foods.map((item) => (
+                        <tr key={item.id} className="text-center align-middle">
+                            <td>
+                                <img  style={{ width: "7rem" }} src={item.imageUrl} alt={item.food} />
+                            </td>
+                            <td>{item.food}</td>
+                            <td>{item.category.category}</td>
+                            <td>
+                                <img
+
+                                    style={{ width: "2.2rem"  ,cursor : 'pointer'}}
+                                    src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
+                                    onClick={() => setSelectedFood(item)}
+                                    alt="Edit"
+                                />
+                            </td>
+                            <td>
+                                <img
+                                    style={{ width: "2.2rem" ,cursor : 'pointer'}}
+                                    src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
+                                    onClick={() => handleRemove(item.id)}
+                                    alt="Delete"
+                                />
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
 
             {selectedFood && (
                 <EditFood

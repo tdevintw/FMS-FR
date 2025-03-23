@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import EditCity from "./EditCity";
 import CityService from "../../../services/cityService.ts";
 
@@ -8,9 +8,8 @@ interface ICity {
     country?: { id: string; country: string };
 }
 
-
 const City = () => {
-    const {getAll, remove} = CityService;
+    const { getAll, remove } = CityService;
     const [cities, setCities] = useState<ICity[]>([]);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedCity, setSelectedCity] = useState<ICity | null>(null);
@@ -19,10 +18,10 @@ const City = () => {
         const fetchCities = async () => {
             try {
                 const cityList: ICity[] = await getAll();
-                console.log("cities : " + JSON.stringify(cityList));
+                console.log("Cities:", JSON.stringify(cityList));
                 setCities(cityList);
             } catch (error) {
-                console.error("Error fetching cities or countries:", error);
+                console.error("Error fetching cities:", error);
             }
         };
 
@@ -44,46 +43,46 @@ const City = () => {
     };
 
     return (
-        <div>
-            <table className="w-full border border-gray-200 text-left">
-                <thead>
-                <tr className="bg-gray-100">
-                    <th className="p-3" style={{textAlign: "center", width: "20rem", border: "1px solid gray"}}>
-                        City
-                    </th>
-                    <th className="p-3" style={{textAlign: "center", width: "20rem", border: "1px solid gray"}}>
-                        Country
-                    </th>
-                    <th className="p-3" style={{textAlign: "center", border: "1px solid gray"}}>Edit</th>
-                    <th className="p-3" style={{textAlign: "center", border: "1px solid gray"}}>Remove</th>
-                </tr>
-                </thead>
-                <tbody>
-                {cities.map((item) => (
-                    <tr key={item.id} className="border-t">
-                        <td className="p-3" style={{border: "1px solid gray"}}>{item.city}</td>
-                        <td className="p-3" style={{border: "1px solid gray"}}>{item.country?.country}</td>
-                        <td className="p-3 text-center" style={{border: "1px solid gray", width: "10rem"}}>
-                            <img
-                                style={{width: "2.2rem", cursor: "pointer"}}
-                                src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
-                                onClick={() => {
-                                    setSelectedCity(item);
-                                    setEditModalOpen(true);
-                                }}
-                            />
-                        </td>
-                        <td className="p-3 text-center" style={{border: "1px solid gray", width: "10rem"}}>
-                            <img
-                                style={{width: "2.2rem", cursor: "pointer"}}
-                                src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
-                                onClick={() => handleDeleteCity(item.id)}
-                            />
-                        </td>
+        <div className="container mt-4">
+            <div className="table-responsive">
+                <table className="table table-bordered table-hover">
+                    <thead className="table-light text-center">
+                    <tr>
+                        <th style={{ width: "20rem" }}>City</th>
+                        <th style={{ width: "20rem" }}>Country</th>
+                        <th style={{ width: "10rem" }}>Edit</th>
+                        <th style={{ width: "10rem" }}>Remove</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {cities.map((item) => (
+                        <tr key={item.id} className="text-center align-middle">
+                            <td>{item.city}</td>
+                            <td>{item.country?.country || "N/A"}</td>
+                            <td>
+                                <img
+                                    style={{ width: "2.2rem", cursor: "pointer" }}
+                                    src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
+                                    onClick={() => {
+                                        setSelectedCity(item);
+                                        setEditModalOpen(true);
+                                    }}
+                                    alt="Edit"
+                                />
+                            </td>
+                            <td>
+                                <img
+                                    style={{ width: "2.2rem", cursor: "pointer" }}
+                                    src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
+                                    onClick={() => handleDeleteCity(item.id)}
+                                    alt="Delete"
+                                />
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
 
             {editModalOpen && selectedCity && (
                 <EditCity

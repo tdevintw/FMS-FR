@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import buildingService from "../../../services/buildingService.ts";
 import EditBuilding from "./EditBuilding.tsx";
 
@@ -9,116 +9,98 @@ interface IUser {
     role: string,
 }
 
-
 interface ICity {
     id: string;
     city: string;
     country: { id: string; country: string };
 }
 
-
 interface IBuilding {
     id: string,
     name: string,
     city: ICity,
-    buildingType : string ,
-    address : string
-    manager : IUser,
+    buildingType: string,
+    address: string,
+    manager: IUser,
 }
 
 const Building = () => {
-
-
     const [buildings, setBuildings] = useState<IBuilding[]>([]);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState<IBuilding | null>(null);
     const BuildingService = buildingService;
 
     useEffect(() => {
-        const fetchCities = async () => {
+        const fetchBuildings = async () => {
             try {
                 const buildingList: IBuilding[] = await BuildingService.getAll();
-                console.log(buildingList);
                 setBuildings(buildingList);
             } catch (error) {
                 console.error("Error fetching buildings:", error);
             }
         };
 
-        fetchCities();
+        fetchBuildings();
     }, []);
-
-
 
     const handleRemove = async (id: string) => {
         try {
             await BuildingService.remove(id);
-            setBuildings((prevInventories) => prevInventories.filter((inventory) => inventory.id !== id));
+            setBuildings((prevBuildings) => prevBuildings.filter((building) => building.id !== id));
         } catch (error) {
-            console.error("Error removing inventory:", error);
+            console.error("Error removing building:", error);
         }
     };
 
     return (
-        <div>
-            <table className="w-full border border-gray-200 text-left">
-                <thead>
-                <tr className="bg-gray-100">
-                    <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}}
-                        className="p-3">Name
-                    </th>
-                    <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">Type
-                    </th>
-                    <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">City
-                    </th>
-                    <th style={{textAlign: "center", width: "20rem", border: "1px solid gray"}} className="p-3">Address
-                    </th>
-                    <th style={{textAlign: "center", border: "1px solid gray"}} className="p-3">Edit</th>
-                    <th style={{textAlign: "center", border: "1px solid gray"}} className="p-3">Remove</th>
-                </tr>
-                </thead>
-                <tbody>
-                {buildings.map((building) => (
-                    <tr className="border-t">
-                        <td className="p-3" style={{border: "1px solid gray"}}>
-                            {building.name}
-                        </td>
-                        <td className="p-3" style={{border: "1px solid gray"}}>
-                            {building.buildingType}
-                        </td>
-                        <td className="p-3" style={{border: "1px solid gray"}}>
-                            {building.city.city}
-                        </td>
-                        <td className="p-3" style={{border: "1px solid gray"}}>
-                            {building.address}
-                        </td>
-                        <td className="p-3 cursor-pointer text-center"
-                            style={{border: "1px solid gray", width: "10rem"}}>
-                            <img
-                                style={{width: "2.2rem", cursor: "pointer"}}
-                                src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
-                                onClick={() => {
-                                    setSelectedBuilding(building);
-                                    setEditModalOpen(true);
-                                }}
-                            />
-                        </td>
-                        <td className="p-3 cursor-pointer text-center"
-                            style={{border: "1px solid gray", width: "10rem"}}>
-                            <img style={{width: "2.2rem"}} onClick={()=>handleRemove(building.id)}
-                                 src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"/>
-                        </td>
+        <div className="container mt-5 mb-5">
+            <div className="table-responsive">
+                <table className="table table-bordered">
+                    <thead className="table-light">
+                    <tr className="text-center">
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>City</th>
+                        <th>Address</th>
+                        <th>Edit</th>
+                        <th>Remove</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {buildings.map((building) => (
+                        <tr key={building.id} className="text-center align-middle">
+                            <td>{building.name}</td>
+                            <td>{building.buildingType}</td>
+                            <td>{building.city.city}</td>
+                            <td>{building.address}</td>
+                            <td>
+                                <img
+                                    style={{ width: "2.2rem", cursor: "pointer" }}
+                                    src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
+                                    onClick={() => {
+                                        setSelectedBuilding(building);
+                                        setEditModalOpen(true);
+                                    }}
+                                />
+                            </td>
+                            <td>
+                                <img
+                                    style={{ width: "2.2rem", cursor: "pointer" }}
+                                    src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
+                                    onClick={() => handleRemove(building.id)}
+                                />
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
 
             {editModalOpen && selectedBuilding && (
                 <EditBuilding
                     building={selectedBuilding}
                     onClose={() => setEditModalOpen(false)}
                 />
-
             )}
         </div>
     );
