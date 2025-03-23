@@ -24,6 +24,7 @@ import OrderPage from "./pages/manager/OrderPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import ContactUs from "./pages/ContactUs.tsx";
 import OrderFoodPage from "./pages/manager/OrderFoodPage.tsx";
+import ManagerOrdersPage from "./pages/manager/ManagerOrderPage.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
     const {user} = useAuth();
@@ -135,6 +136,16 @@ const App: React.FC = () => {
                             }/>
 
                         }/>
+
+                        <Route path="/manager/orders" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <ManagerOrdersPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
 
 
                         <Route path="/" element={<HomePage/>}/>

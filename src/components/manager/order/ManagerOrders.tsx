@@ -1,6 +1,5 @@
 import orderService from "../../../services/orderService.ts";
-import {useEffect, useState} from "react";
-
+import { useEffect, useState } from "react";
 
 interface ICity {
     id: string;
@@ -11,12 +10,11 @@ interface ICity {
 interface InventoryItem {
     id: string;
     price: number;
-    user: { id: string, username: string, email: string, role: string };
+    supplier: { id: string, username: string, email: string, role: string };
     food: {
         id: string, food: string, imageUrl: string,
         category: { id: string, category: string, imageUrl: string }
     };
-
     city: ICity;
 }
 
@@ -31,26 +29,22 @@ interface IBuilding {
     id: string,
     name: string,
     city: ICity,
-    buildingType : string ,
-    address : string
-    manager : IUser,
+    buildingType: string,
+    address: string,
+    manager: IUser,
 }
 
-
-interface IOrder{
-    quantity : number ,
-    totalPrice : number ,
-    supplierInventory : InventoryItem,
-    building : IBuilding,
-    status : string ,
-    shipment : {id : string , currentLocation:string}
+interface IOrder {
+    quantity: number,
+    totalPrice: number,
+    supplierInventory: InventoryItem,
+    building: IBuilding,
+    orderStatus: string,
+    shipment: { id: string, currentLocation: string }
 }
 
 const ManagerOrders = () => {
-
-
     const [orders, setOrders] = useState<IOrder[]>([]);
-
     const OrderService = orderService;
 
     useEffect(() => {
@@ -67,39 +61,46 @@ const ManagerOrders = () => {
         fetchOrders();
     }, []);
 
-
     return (
-        <div>
-            <table className="w-full border border-gray-200 text-left">
-                <thead>
-                <tr className="bg-gray-100">
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Food</th>
-                    <th className="p-3" style={{ textAlign: "center", width: "20rem", border: "1px solid gray" }}>Image</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Quantity</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Total Price</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Supplier</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Status</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Building</th>
-                    <th className="p-3 w-25" style={{ textAlign: "center", border: "1px solid gray" }}>Current Location</th>
-                </tr>
-                </thead>
-                <tbody>
-                {orders.map((order) => (
-                    <tr className="border-t">
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{order.supplierInventory.food.food}</td>
-                        <td className="p-3 text-center" style={{ border: "1px solid gray" }}>
-                            <img style={{ width: "7rem" }} src={order.supplierInventory.food.imageUrl} alt={order.supplierInventory.food.food} />
-                        </td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{order.quantity}</td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{order.totalPrice}</td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{order.supplierInventory.user.username}</td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{order.status}</td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{order.building.name}</td>
-                        <td className="p-3" style={{ border: "1px solid gray" }}>{order.shipment ? order.shipment.currentLocation: "Not Shipped Yet"}</td>
+        <div className="container mt-5 mb-5">
+            <div className="table-responsive">
+                <table className="table table-bordered ">
+                    <thead className="table-light">
+                    <tr className="text-center">
+                        <th>Food</th>
+                        <th>Image</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Supplier</th>
+                        <th>Status</th>
+                        <th>Building</th>
+                        <th>Current Location</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {orders.map((order) => (
+                        <tr  key={order.supplierInventory.id} className="text-center">
+                            <td className="align-middle"> {order.supplierInventory.food.food}</td>
+                            <td className="align-middle">
+                                <img
+                                    style={{ width: "7rem", borderRadius: "8px" }}
+                                    src={order.supplierInventory.food.imageUrl}
+                                    alt={order.supplierInventory.food.food}
+                                    className="img-fluid"
+                                />
+                            </td>
+
+                            <td className="align-middle">{order.quantity}</td>
+                            <td className="align-middle">{order.totalPrice}</td>
+                            <td className="align-middle"> {order.supplierInventory.supplier.username}</td>
+                            <td className="align-middle">{order.orderStatus}</td>
+                            <td className="align-middle">{order.building.name}</td>
+                            <td className="align-middle">{order.shipment ? order.shipment.currentLocation : "Not Shipped Yet"}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
