@@ -84,7 +84,46 @@ const OrderService = {
             console.error("Error fetching inventory items:", error);
             throw error;
         }
+    },
+
+    async findOrdersBySupplierId(){
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) {
+            throw new Error("User not authenticated");
+        }
+
+        let user;
+        try {
+            user = JSON.parse(storedUser);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Invalid stored user data");
+        }
+        if (!user || !user.token) {
+            throw new Error("User not authenticated");
+        }
+        const supplierId = getUserIdFromToken(user.token);
+        if (!supplierId) {
+            throw new Error("Invalid or missing user ID in token");
+        }
+
+        try {
+            const response = await axios.get("http://localhost:9999/api/orders/supplier/"+supplierId, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching inventory items:", error);
+            throw error;
+        }
     }
+
+
+
 }
 
 export default OrderService;

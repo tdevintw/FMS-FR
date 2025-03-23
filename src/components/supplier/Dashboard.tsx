@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 
 const Dashboard = () => {
     const [isHoveredInventory, setIsHoveredInventory] = useState(false);
+    const [isHoveredOrders, setIsHoveredOrders] = useState(false);
 
     return (
         <div className="tab-pane" id="account-info" role="tabpanel">
@@ -31,7 +32,32 @@ const Dashboard = () => {
                         <span>Inventory</span>
                     </Link>
                 </div>
+                <div className="account-details-form">
+                <Link to={"/supplier/orders"}
+                      className="d-flex align-items-center justify-content-between mb-3 p-2"
+                      style={{
+                          transition: "all 0.3s ease",
+                          backgroundColor: isHoveredOrders ? "#f5f5f5" : "transparent",
+                          cursor: "pointer",
+                          borderRadius: "0.5rem",
+                          border : '1px solid #d9d8d9',
+
+                      }}
+                      onMouseEnter={() => setIsHoveredOrders(true)}
+                      onMouseLeave={() => setIsHoveredOrders(false)}
+                >
+                    <div style={{ width: "2.5rem" }}>
+                        <img
+                            src={"https://cdn-icons-png.flaticon.com/128/10107/10107601.png"}
+                            alt="Inventory"
+                        />
+                    </div>
+                    <span>Orders</span>
+                </Link>
             </div>
+
+            </div>
+
         </div>
     );
 };
