@@ -1,10 +1,11 @@
 import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import foodService from "../../../services/foodService.ts";
 import buildingService from "../../../services/buildingService.ts";
 import inventoryService from "../../../services/inventoryService.ts";
 import CountryService from "../../../services/countryService.ts";
 import CityService from "../../../services/cityService.ts";
+import orderService from "../../../services/orderService.ts";
 
 interface FoodItem {
     id: string;
@@ -72,6 +73,8 @@ const OrderFood = () => {
     const FoodService = foodService;
     const BuildingService = buildingService;
     const InventoryService = inventoryService;
+    const OrderService = orderService;
+
     useEffect(() => {
         if (!id) {
             navigate("/404");
@@ -89,7 +92,6 @@ const OrderFood = () => {
         }
     }, [id, navigate]);
 
-
     useEffect(() => {
         const fetchCities = async () => {
             try {
@@ -104,9 +106,6 @@ const OrderFood = () => {
         fetchCities();
     }, [selectedCountry]);
 
-
-
-
     useEffect(() => {
         const fetchBuildings = async () => {
             try {
@@ -116,8 +115,6 @@ const OrderFood = () => {
                 console.error("Error fetching building item:", error);
             }
         };
-
-
 
 
         const fetchInventoriesWithFood = async () => {
@@ -154,7 +151,6 @@ const OrderFood = () => {
         setInventories(originalInventories);
     }, [selectedCountry]);
 
-
     const handleSelectedCity = (id: string) => {
         setSelectedCity(id);
         if (id) {
@@ -165,15 +161,12 @@ const OrderFood = () => {
         }
     };
 
-
-
     const handleSupplierChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = inventories.find(inv => inv.id === e.target.value) || null;
         setSelectedInventory(selected);
         setNumber(1);
         setPrice(selected ? selected.price : null);
     };
-
 
     const onUpdatePlus = () => {
         if (selectedInventory && number < 101) {
@@ -188,6 +181,24 @@ const OrderFood = () => {
             setPrice(prev => (prev !== null ? prev - selectedInventory.price : selectedInventory.price));
         }
     };
+
+    const handleOrderFood = async () => {
+        if (number < 1 || !selectedInventory || !selectedBuilding || !price) {
+            alert("Please chose an inventory and a building");
+            return;
+        }
+
+        try {
+            await OrderService.add(number, selectedInventory.id, selectedBuilding, price);
+            alert("Order was sent to supplier!");
+            navigate("/order")
+
+        } catch (error) {
+            alert("Failed to add order.");
+            console.log(error);
+        }
+    }
+
     return (
         <div className="single-product-main-area mb-30">
             <div className="container container-default custom-area">
@@ -196,7 +207,6 @@ const OrderFood = () => {
                         <div className="border p-4 rounded bg-light">
                             <h3 className="mb-3">Order Details</h3>
                             <div className="row">
-                                {/* Supplier Dropdown */}
                                 <div className="col-md-3 mb-3">
                                     <label className="form-label">Supplier</label>
                                     <select className="form-select" onChange={handleSupplierChange}>
@@ -230,7 +240,7 @@ const OrderFood = () => {
                                     <select
                                         className="form-select"
                                         value={selectedCity}
-                                        onChange={(e)=>handleSelectedCity(e.target.value)}
+                                        onChange={(e) => handleSelectedCity(e.target.value)}
                                         disabled={!selectedCountry}
                                     >
                                         <option value="">Select City</option>
@@ -290,7 +300,7 @@ const OrderFood = () => {
                                     </div>
                                 </div>
                                 <div className="add-to_cart">
-                                    <a className="btn obrien-button primary-btn" href="cart.html">Order</a>
+                                    <a onClick={handleOrderFood} className="btn obrien-button primary-btn">Order</a>
                                 </div>
                             </div>
                         </div>
