@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import CityService from "../../../services/cityService.ts";
 import CountryService from "../../../services/countryService.ts";
 
-const AddCity = () => {
+interface AddCityProps {
+    onAddCity: (city: { id: string; city: string; country?: { id: string; country: string } }) => void;
+}
+
+const AddCity = ({ onAddCity }: AddCityProps) => {
     const [showModal, setShowModal] = useState(false);
     const [city, setCity] = useState("");
     const [countryId, setCountryId] = useState("");
@@ -31,7 +35,18 @@ const AddCity = () => {
         setError("");
 
         try {
-            await CityService.add({ city, countryId });
+            const response = await CityService.add({ city, countryId });
+            const selectedCountry = countries.find(c => c.id === countryId);
+            onAddCity({
+                id: response.id,
+                city: response.city,
+                country: selectedCountry ? {
+                    id: selectedCountry.id,
+                    country: selectedCountry.country
+                } : undefined
+            });
+            setCity("");
+            setCountryId("");
             setShowModal(false);
         } catch (err) {
             setError("Failed to add city. Please try again.");
@@ -40,6 +55,7 @@ const AddCity = () => {
             setLoading(false);
         }
     };
+
 
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
