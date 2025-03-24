@@ -120,6 +120,77 @@ const OrderService = {
             console.error("Error fetching inventory items:", error);
             throw error;
         }
+    },
+
+    async edit(id : string , quantity : number , supplierInventoryId : string , buildingId : string ,totalPrice : number ,orderStatus : string){
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) {
+            throw new Error("User not authenticated");
+        }
+
+        let user;
+        try {
+            user = JSON.parse(storedUser);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Invalid stored user data");
+        }
+        if (!user || !user.token) {
+            throw new Error("User not authenticated");
+        }
+
+
+        const orderData = { quantity, supplierInventoryId, buildingId ,totalPrice , orderStatus};
+
+        console.log(id);
+
+        try {
+            const response = await axios.put("http://localhost:9999/api/orders/"+id, orderData, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error("Error adding  item:", error);
+            throw error;
+        }
+    },
+
+    async assignShipper(orderId : string ,shipperId : string){
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) {
+            throw new Error("User not authenticated");
+        }
+
+        let user;
+        try {
+            user = JSON.parse(storedUser);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Invalid stored user data");
+        }
+        if (!user || !user.token) {
+            throw new Error("User not authenticated");
+        }
+
+        const shipperData = { orderId, shipperId};
+        console.log(shipperData);
+        try {
+            const response = await axios.put("http://localhost:9999/api/orders/assign-shipper", shipperData ,{
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error("Error adding  item:", error);
+            throw error;
+        }
     }
 
 

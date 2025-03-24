@@ -55,6 +55,7 @@ const SupplierOrders = () => {
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [shippers, setShippers] = useState<IShipper[]>([]);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
     const [selectedShipperId, setSelectedShipperId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,15 +85,18 @@ const SupplierOrders = () => {
         fetchShippers();
     }, []);
 
-    const handleRefuseOrder = async (orderId: string) => {
-        try {
-            // await OrderService.updateOrderStatus(orderId, "REFUSED");
-            setOrders(orders.map(order =>
-                order.id === orderId ? { ...order, orderStatus: "REFUSED" } : order
-            ));
-        } catch (error) {
-            console.error("Error refusing order:", error);
+    const handleRefuseOrder = async () => {
+        if(selectedOrder){
+            try {
+                await OrderService.edit(selectedOrder?.id , selectedOrder?.quantity , selectedOrder?.supplierInventory.id , selectedOrder?.building.id , selectedOrder?.totalPrice , "REFUSED");
+                setOrders(orders.map(order =>
+                    order.id === selectedOrder?.id? { ...order, orderStatus: "REFUSED" } : order
+                ));
+            } catch (error) {
+                console.error("Error refusing order:", error);
+            }
         }
+
     };
 
     const openAssignShipperModal = (orderId: string) => {
@@ -101,12 +105,13 @@ const SupplierOrders = () => {
     };
 
     const handleAssignShipper = async () => {
-        if (!selectedOrderId || !selectedShipperId) return;
+        console.log(selectedOrder + " " +selectedShipperId );
+        if (!selectedOrder || !selectedShipperId) return;
 
         try {
-            // await OrderService.assignShipperToOrder(selectedOrderId, selectedShipperId);
+            await OrderService.assignShipper(selectedOrder.id , selectedShipperId);
             setOrders(orders.map(order =>
-                order.id === selectedOrderId ? { ...order, orderStatus: "ASSIGNED" } : order
+                order.id === selectedOrderId ? { ...order, orderStatus: "IN_DELIVERY" } : order
             ));
             setIsModalOpen(false);
             setSelectedOrderId(null);
@@ -185,13 +190,16 @@ const SupplierOrders = () => {
                                     <div className="d-flex gap-2 justify-content-center">
                                         <button
                                             style={cancelButtonStyle}
-                                            onClick={() => handleRefuseOrder(order.id)}
+                                            onClick={() =>{
+                                                setSelectedOrder(order);
+                                                handleRefuseOrder();
+                                            }}
                                         >
                                             Refuse
                                         </button>
                                         <button
                                             style={addButtonStyle}
-                                            onClick={() => openAssignShipperModal(order.id)}
+                                            onClick={() => {openAssignShipperModal(order.id);setSelectedOrder(order)}}
                                         >
                                             Assign Shipper
                                         </button>
@@ -206,7 +214,7 @@ const SupplierOrders = () => {
 
             {isModalOpen && (
                 <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div  className=" modal-dialog modal-lg">
+                    <div  className="modal-dialog modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">Assign Shipper to Order</h5>
