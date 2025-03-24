@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const UserService = {
     async getUser() {
         const storedUser = localStorage.getItem('user');
@@ -158,6 +160,57 @@ const UserService = {
             throw new Error('Failed to delete user');
         }
         localStorage.removeItem('user');
+    },
+
+    async getAllShippers(){
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) {
+            throw new Error('User not authenticated');
+        }
+
+        let user;
+        try {
+            user = JSON.parse(storedUser);
+        } catch (error) {
+            console.error(error);
+            throw new Error('Invalid stored user data');
+        }
+
+        if (!user || !user.token) {
+            throw new Error('User not authenticated');
+        }
+
+        const tokenParts = user.token.split('.');
+        if (tokenParts.length !== 3) {
+            throw new Error('Invalid token format');
+        }
+
+        let tokenPayload;
+        try {
+            tokenPayload = JSON.parse(atob(tokenParts[1]));
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to decode token');
+        }
+
+        const {role, id} = tokenPayload;
+        if (!role || !id) {
+            throw new Error('Invalid token structure');
+        }
+
+        try {
+            const response = await axios.get("http://localhost:9999/api/shippers", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching inventory items:", error);
+            throw error;
+        }
     }
 };
 
