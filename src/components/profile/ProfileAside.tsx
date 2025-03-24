@@ -16,6 +16,7 @@ const ProfileAside = () => {
         if (user?.role === "ADMIN") return "/admin";
         if (user?.role === "MANAGER") return "/manager";
         if (user?.role === "SUPPLIER") return "/supplier";
+        if (user?.role === "SHIPPER") return "/shipper";
         return "/profile";
     };
 

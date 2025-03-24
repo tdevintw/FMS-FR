@@ -1,5 +1,5 @@
-import orderService from "../../../services/orderService.ts";
 import { useEffect, useState } from "react";
+import orderService from "../../services/orderService.ts";
 
 interface ICity {
     id: string;

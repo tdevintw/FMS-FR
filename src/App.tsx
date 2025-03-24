@@ -26,6 +26,8 @@ import ContactUs from "./pages/ContactUs.tsx";
 import OrderFoodPage from "./pages/manager/OrderFoodPage.tsx";
 import ManagerOrdersPage from "./pages/manager/ManagerOrderPage.tsx";
 import SupplierOrderPage from "./pages/supplier/SupplierOrderPage.tsx";
+import ShipperOrderPage from "./pages/shipper/ShipperOrderPage.tsx";
+import ShipperDashboardPage from "./pages/shipper/ShipperDashboardPage.tsx";
 
 const PublicRoute: React.FC<{ element: JSX.Element }> = ({element}) => {
     const {user} = useAuth();
@@ -84,6 +86,17 @@ const App: React.FC = () => {
                             }/>
 
                         }/>
+
+
+                        <Route path="/shipper" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <ShipperDashboardPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
 
                         <Route path="/admin/categories" element={
                             <ProtectedRoute element={
@@ -155,6 +168,17 @@ const App: React.FC = () => {
                             }/>
 
                         }/>
+
+
+                        <Route path="/shipper/orders" element={
+                            <ProtectedRoute element={
+                                <UserProvider>
+                                    <ShipperOrderPage/>
+                                </UserProvider>
+                            }/>
+
+                        }/>
+
 
 
 
