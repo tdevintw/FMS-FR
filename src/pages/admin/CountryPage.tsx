@@ -44,7 +44,7 @@ const CountryPage = () => {
 
     const handleDeleteCountry = async (uuid: string) => {
         try {
-            await remove(uuid); // First delete from backend
+            await remove(uuid);
             setCountries(prevCountries => prevCountries.filter(country => country.id !== uuid));
         } catch (error) {
             console.error("Error deleting country:", error);

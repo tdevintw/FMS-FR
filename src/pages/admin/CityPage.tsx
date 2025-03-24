@@ -45,17 +45,12 @@ const CityPage = () => {
 
     const handleDeleteCity = async (uuid: string) => {
         try {
-            // Optimistically update the UI
             setCities(prevCities => prevCities.filter(city => city.id !== uuid));
-
             await cityService.remove(uuid);
-
-            // Optional: verify with server
             const freshList = await getAll();
             setCities(freshList);
         } catch (error) {
             console.error("Error deleting city:", error);
-            // Revert to server state if something went wrong
             fetchCities();
         }
     };

@@ -205,6 +205,12 @@ const SupplierOrders = () => {
                                         </button>
                                     </div>
                                 )}
+                                {order.orderStatus != "PENDING" && (
+                                    <div className="d-flex gap-2 justify-content-center">
+                                        Order was assigned or rejected
+                                    </div>
+                                )}
+
                             </td>
                         </tr>
                     ))}

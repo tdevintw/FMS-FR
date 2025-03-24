@@ -215,21 +215,29 @@ const ManagerOrders = () => {
                             <td className="align-middle">{order.building.name}</td>
                             <td className="align-middle">{order.currentLocation ? order.currentLocation : "Not Shipped Yet"}</td>
                             <td className="align-middle">
-                                <div className="d-flex gap-2 justify-content-center">
-                                    <button
-                                        style={addButtonStyle}
-                                        onClick={() => handleUpdateLocation(order)}
-                                    >
-                                        Update Location
-                                    </button>
-                                    <button
-                                        style={deliveredButtonStyle}
-                                        onClick={() => handleMarkAsDelivered(order.id)}
-                                        disabled={order.orderStatus === "DELIVERED"}
-                                    >
-                                        Delivered
-                                    </button>
-                                </div>
+                                {order.orderStatus === "PENDING" && (
+                                    <div className="d-flex gap-2 justify-content-center">
+                                        <button
+                                            style={addButtonStyle}
+                                            onClick={() => handleUpdateLocation(order)}
+                                        >
+                                            Update Location
+                                        </button>
+                                        <button
+                                            style={deliveredButtonStyle}
+                                            onClick={() => handleMarkAsDelivered(order.id)}
+                                        >
+                                            Delivered
+                                        </button>
+                                    </div>
+                                )}
+
+
+                                {order.orderStatus != "PENDING" && (
+                                    <div className="d-flex gap-2 justify-content-center">
+                                        Order was assigned or rejected
+                                    </div>
+                                )}
                             </td>
                         </tr>
                     ))}
