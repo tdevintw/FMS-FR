@@ -1,13 +1,24 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import CategoryService from "../../../services/categoryService.ts";
 import FoodService from "../../../services/foodService.ts";
 
-const AddFood = () => {
+interface AddFoodProps {
+    onAddFood: (food: {
+        id: string;
+        food: string;
+        imageUrl: string;
+        category: { id: string; category: string };
+    }) => void;
+}
+
+const AddFood = ({ onAddFood }: AddFoodProps) => {
     const [showModal, setShowModal] = useState(false);
     const [foodName, setFoodName] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [categories, setCategories] = useState<{ id: string; category: string }[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -23,15 +34,38 @@ const AddFood = () => {
 
     const handleAddFood = async () => {
         if (!foodName.trim() || !categoryId.trim() || !selectedFile) {
-            alert("All fields are required.");
+            setError("All fields are required.");
             return;
         }
 
+        setLoading(true);
+        setError("");
+
         try {
-            await FoodService.add(foodName, categoryId, selectedFile);
+            const response = await FoodService.add(foodName, categoryId, selectedFile);
+            const selectedCategory = categories.find(c => c.id === categoryId);
+
+            if (selectedCategory) {
+                onAddFood({
+                    id: response.id,
+                    food: response.food,
+                    imageUrl: response.imageUrl,
+                    category: {
+                        id: selectedCategory.id,
+                        category: selectedCategory.category
+                    }
+                });
+            }
+
+            setFoodName("");
+            setCategoryId("");
+            setSelectedFile(null);
             setShowModal(false);
         } catch (error) {
+            setError("Failed to add food. Please try again.");
             console.error("Error adding food:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -133,10 +167,13 @@ const AddFood = () => {
             {showModal && (
                 <div style={modalOverlayStyle} onClick={() => setShowModal(false)}>
                     <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-                        <h2 style={{marginBottom: '2rem'}}>Add Category</h2>
+                        <h2 style={{marginBottom: '2rem'}}>Add Food</h2>
+                        {error && <p style={{ color: "red" }}>{error}</p>}
                         <input
-                            type="text" placeholder="Food Name"
+                            type="text"
+                            placeholder="Food Name"
                             style={inputStyle}
+                            value={foodName}
                             onChange={(e) => setFoodName(e.target.value)}
                         />
                         <select
@@ -152,22 +189,24 @@ const AddFood = () => {
                                 </option>
                             ))}
                         </select>
-
-
                         <input
                             type="file"
                             accept="image/*"
                             onChange={handleFileChange}
                             style={fileInputStyle}
                         />
-
                         {selectedFile && <p>{selectedFile.name}</p>}
                         <div style={actionsStyle}>
-                            <button style={addButtonStyle}
-                                    onClick={handleAddFood}
-                            >Add
+                            <button
+                                style={addButtonStyle}
+                                onClick={handleAddFood}
+                                disabled={loading}
+                            >
+                                {loading ? "Adding..." : "Add"}
                             </button>
-                            <button style={cancelButtonStyle} onClick={() => setShowModal(false)}>Cancel</button>
+                            <button style={cancelButtonStyle} onClick={() => setShowModal(false)}>
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>

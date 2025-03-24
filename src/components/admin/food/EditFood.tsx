@@ -10,7 +10,7 @@ interface EditFoodProps {
         category: {
             id: string;
             category: string;
-            imageUrl: string;
+            imageUrl?: string;
         };
     };
     onClose: () => void;
