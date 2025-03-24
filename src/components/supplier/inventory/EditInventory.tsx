@@ -5,111 +5,109 @@ import inventoryService from "../../../services/inventoryService.ts";
 import cityService from "../../../services/cityService.ts";
 import countryService from "../../../services/countryService.ts";
 
-interface EditInventoryProps {
-    inventory: {
-        id: string,
-        price: number,
-        food: {
-            id: string,
-            food: string,
-            imageUrl: string,
-            category: { id: string, category: string, imageUrl: string };
-        },
-        city : ICity,
-    };
-    onClose: () => void;
+interface ICategory{
+    id: string,
+    category: string,
+    imageUrl: string
 }
 
-interface FoodItem {
-    id: string;
-    imageUrl: string;
-    food: string;
-    category: { id: string, category: string, imageUrl: string };
+
+interface IFood{
+    id: string,
+    food: string,
+    imageUrl: string,
+    category: ICategory;
 }
 
-interface ICategory {
-    id: string;
-    category: string;
-    imageUrl: string;
-}
+interface ICity{
 
-interface ICity {
     id: string;
     city: string;
-    country: { id: string; country: string };
+    country: ICountry
+
 }
 
-
-interface ICountry {
+interface ICountry{
     id: string;
     country: string
 }
 
 
 
+interface EditInventoryProps {
+    inventory: {
+        id: string;
+        price: number;
+        food: IFood;
+        city: ICity;
+    };
+    onClose: () => void;
+    onUpdate: (updatedInventory: {
+        id: string;
+        foodId: string;
+        price: number;
+        cityId: string;
+    }) => void;
+}
 
-const EditInventory = ({inventory, onClose}: EditInventoryProps) => {
-    const [foods, setFoods] = useState<FoodItem[]>([]);
+const EditInventory = ({ inventory, onClose, onUpdate }: EditInventoryProps) => {
+    const [foods, setFoods] = useState<IFood[]>([]);
     const [categories, setCategories] = useState<ICategory[]>([]);
-    const [selectedFood, setSelectedFood] = useState<string>(inventory.food.id);
-    const [selectedCategory, setSelectedCategory] = useState<string>(inventory.food.category.id);
-    const [price, setPrice] = useState<number>(inventory.price);
-    const InventoryService = inventoryService;
+    const [selectedFood, setSelectedFood] = useState(inventory.food.id);
+    const [selectedCategory, setSelectedCategory] = useState(inventory.food.category.id);
+    const [price, setPrice] = useState(inventory.price);
     const [cityId, setCityId] = useState(inventory.city.id);
     const [cities, setCities] = useState<ICity[]>([]);
     const [countries, setCountries] = useState<ICountry[]>([]);
     const [selectedCountry, setSelectedCountry] = useState(inventory.city.country.id);
-    const CityService = cityService;
-    const CountryService = countryService;
 
     useEffect(() => {
-        const fetchFoods = async () => {
+        const fetchData = async () => {
             try {
-                const foodList = await foodService.getAll();
+                const [
+                    foodList,
+                    categoryList,
+                    cityList,
+                    countryList
+                ] = await Promise.all([
+                    foodService.getAll(),
+                    categoryService.getAll(),
+                    cityService.getAll(),
+                    countryService.getAll()
+                ]);
+
                 setFoods(foodList);
-            } catch (error) {
-                console.error("Error fetching foods:", error);
-            }
-        };
-
-        const fetchCategories = async () => {
-            try {
-                const categoryList = await categoryService.getAll();
                 setCategories(categoryList);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
-
-        const fetchCities = async () => {
-            try {
-                const cityList = await CityService.getAll();
                 setCities(cityList);
-            } catch (error) {
-                console.error("Error fetching cities:", error);
-            }
-        };
-
-        const fetchCountries = async () => {
-            try {
-                const countryList = await CountryService.getAll();
                 setCountries(countryList);
             } catch (error) {
-                console.error("Error fetching countries:", error);
+                console.error("Error fetching data:", error);
             }
         };
 
-        fetchCountries();
-        fetchCities();
-        fetchFoods();
-        fetchCategories();
+        fetchData();
     }, []);
-    const handleSaveChanges = async  () => {
-       if(!selectedFood || price<1 || !cityId){
-           alert("Food is required and price must be at least 1");
-       }
-        await InventoryService.edit(selectedFood , price ,inventory.id ,cityId);
-        onClose();
+
+
+
+    const handleSaveChanges = async () => {
+        if (!selectedFood || price < 1 || !cityId) {
+            return;
+        }
+
+
+        try {
+            await inventoryService.edit(selectedFood, price, inventory.id, cityId);
+            onUpdate({
+                id: inventory.id,
+                foodId: selectedFood,
+                price,
+                cityId
+            });
+            onClose();
+        } catch (error) {
+            console.error("Error updating inventory:", error);
+        }
     };
 
     return (

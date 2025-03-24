@@ -3,97 +3,93 @@ import foodService from "../../../services/foodService.ts";
 import inventoryService from "../../../services/inventoryService.ts";
 import categoryService from "../../../services/categoryService.ts";
 import cityService from "../../../services/cityService.ts";
-import countryService from "../../../services/countryService.ts"; // Assuming you have a category service
+import countryService from "../../../services/countryService.ts";
 
-interface FoodItem {
-    id: string;
-    imageUrl: string;
-    food: string;
-    category: { id: string, category: string, imageUrl: string };
+
+interface ICategory{
+    id: string,
+    category: string,
+    imageUrl: string
 }
 
-interface ICategory {
-    id: string;
-    category: string;
-    imageUrl: string;
+
+interface IFood{
+    id: string,
+    food: string,
+    imageUrl: string,
+    category: ICategory;
 }
 
-interface ICity {
+interface ICity{
+
     id: string;
     city: string;
-    country: { id: string; country: string };
+    country: ICountry
+
 }
 
-
-interface ICountry {
+interface ICountry{
     id: string;
     country: string
 }
 
+interface AddInventoryProps {
+    onAddInventory: (inventory: {
+        id: string;
+        price: number;
+        user: {
+            id: string,
+            username: string,
+            email: string,
+            role: string
+        };
+        food: IFood;
+        city: ICity;
+    }) => void;
+}
 
-const AddInventory = () => {
+const AddInventory = ({ onAddInventory }: AddInventoryProps) => {
     const [showModal, setShowModal] = useState(false);
     const [price, setPrice] = useState(0);
     const [foodId, setFoodId] = useState("");
-    const [foods, setFoods] = useState<FoodItem[]>([]);
+    const [foods, setFoods] = useState<IFood[]>([]);
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [cityId, setCityId] = useState("");
     const [cities, setCities] = useState<ICity[]>([]);
     const [countries, setCountries] = useState<ICountry[]>([]);
     const [selectedCountry, setSelectedCountry] = useState("");
-    const CityService = cityService;
-    const CountryService = countryService;
-
 
     useEffect(() => {
-        const fetchFoods = async () => {
+        const fetchData = async () => {
             try {
-                const foodList = await foodService.getAll();
+                const [
+                    foodList,
+                    categoryList,
+                    cityList,
+                    countryList
+                ] = await Promise.all([
+                    foodService.getAll(),
+                    categoryService.getAll(),
+                    cityService.getAll(),
+                    countryService.getAll()
+                ]);
+
                 setFoods(foodList);
-            } catch (error) {
-                console.error("Error fetching foods:", error);
-            }
-        };
-
-        const fetchCategories = async () => {
-            try {
-                const categoryList = await categoryService.getAll();
                 setCategories(categoryList);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
-
-        const fetchCities = async () => {
-            try {
-                const cityList = await CityService.getAll();
                 setCities(cityList);
-            } catch (error) {
-                console.error("Error fetching cities:", error);
-            }
-        };
-
-        const fetchCountries = async () => {
-            try {
-                const countryList = await CountryService.getAll();
                 setCountries(countryList);
             } catch (error) {
-                console.error("Error fetching countries:", error);
+                console.error("Error fetching data:", error);
             }
         };
 
-        fetchCountries();
-        fetchCities();
-        fetchFoods();
-        fetchCategories();
+        fetchData();
     }, []);
 
     const filteredCities = selectedCountry
         ? cities.filter((city) => city.country.id === selectedCountry)
         : [];
-
-
 
     const filteredFoods = selectedCategory
         ? foods.filter((food) => food.category.id === selectedCategory)
@@ -101,17 +97,34 @@ const AddInventory = () => {
 
     const handleAddInventory = async () => {
         if (!foodId.trim() || price <= 0 || !cityId) {
-            alert("All fields are required and price must be positive.");
             return;
         }
 
+
         try {
-            await inventoryService.add(foodId, price , cityId);
+            const response = await inventoryService.add(foodId, price, cityId);
+            const selectedFood = foods.find(f => f.id === foodId);
+            const selectedCity = cities.find(c => c.id === cityId);
+
+            if (selectedFood && selectedCity) {
+                onAddInventory({
+                    ...response,
+                    food: selectedFood,
+                    city: selectedCity
+                });
+            }
+
             setShowModal(false);
-        } catch (error) {
-            console.error("Error adding inventory:", error);
+            setPrice(0);
+            setFoodId("");
+            setCityId("");
+            setSelectedCountry("");
+            setSelectedCategory("");
+        } catch (err) {
+            console.error("Error adding inventory:", err);
         }
     };
+
 
     return (
         <div style={{ display: "flex", justifyContent: "end" }}>
