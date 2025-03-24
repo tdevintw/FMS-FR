@@ -97,7 +97,6 @@ const EditCategory = ({ category, onClose, onUpdate }: EditCategoryProps) => {
                 imageUrl: updatedCategory.imageUrl || category.imageUrl, // Use new image if updated
             });
 
-            alert("Category updated successfully!");
             onClose();
         } catch (error) {
             alert("Failed to update category.");

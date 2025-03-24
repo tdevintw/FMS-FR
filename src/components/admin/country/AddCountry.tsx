@@ -1,13 +1,39 @@
 import React, { useState } from "react";
 import CountryService from "../../../services/countryService.ts";
 
-const AddCountry = () => {
+interface AddCountryProps {
+    onAddCountry: (country: { id: string; country: string }) => void;
+}
+
+const AddCountry = ({ onAddCountry }: AddCountryProps) => {
     const [showModal, setShowModal] = useState(false);
     const [country, setCountry] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const { add } = CountryService;
 
+
+    const handleAddCountry = async () => {
+        if (!country.trim()) {
+            setError("Country name is required.");
+            return;
+        }
+        setLoading(true);
+        setError("");
+
+        try {
+            const response = await add({ country });
+            console.log("Country added successfully:", response);
+            onAddCountry(response);
+            setCountry("");
+            setShowModal(false);
+        } catch (err) {
+            setError("Failed to add country. Please try again.");
+            console.error("Error adding country:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
         top: 0,
@@ -64,25 +90,6 @@ const AddCountry = () => {
         color: "white",
     };
 
-    const handleAddCountry = async () => {
-        if (!country.trim()) {
-            setError("Country name is required.");
-            return;
-        }
-        setLoading(true);
-        setError("");
-
-        try {
-            const response = await add({ country });
-            console.log("Country added successfully:", response);
-            setShowModal(false);
-        } catch (err) {
-            setError("Failed to add country. Please try again.");
-            console.error("Error adding country:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <>

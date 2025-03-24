@@ -27,7 +27,6 @@ const AddCategory = ({ onAddCategory }: AddCategoryProps) => {
         try {
             const newCategory = await CategoryService.add(categoryName, selectedFile);
             onAddCategory(newCategory); // Call parent function with new category
-            alert("Category added successfully!");
             setShowModal(false);
             setCategoryName("");
             setSelectedFile(null);
