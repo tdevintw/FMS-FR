@@ -35,6 +35,7 @@ interface IBuilding {
 }
 
 interface IOrder {
+    id: string;
     quantity: number,
     totalPrice: number,
     supplierInventory: InventoryItem,
@@ -45,12 +46,15 @@ interface IOrder {
 
 const ManagerOrders = () => {
     const [orders, setOrders] = useState<IOrder[]>([]);
+    const [showModal, setShowModal] = useState(false);
+    const [currentOrder, setCurrentOrder] = useState<IOrder | null>(null);
+    const [locationInput, setLocationInput] = useState("");
     const OrderService = orderService;
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const orderList: IOrder[] = await OrderService.findOrdersByManagerId();
+                const orderList: IOrder[] = await OrderService.findOrdersByShipperId();
                 console.log(orderList);
                 setOrders(orderList);
             } catch (error) {
@@ -61,10 +65,118 @@ const ManagerOrders = () => {
         fetchOrders();
     }, []);
 
+    const handleUpdateLocation = (order: IOrder) => {
+        setCurrentOrder(order);
+        setLocationInput(order.currentLocation || "");
+        setShowModal(true);
+    };
+
+    const handleSaveLocation = async () => {
+        if (!currentOrder) return;
+
+        try {
+            await OrderService.updateCurrentLocation(currentOrder.id, locationInput);
+
+            setOrders(orders.map(order =>
+                order.id === currentOrder.id
+                    ? { ...order, currentLocation: locationInput }
+                    : order
+            ));
+
+            setShowModal(false);
+        } catch (error) {
+            console.error("Error updating location:", error);
+        }
+    };
+
+    const handleMarkAsDelivered = async (orderId: string) => {
+        try {
+            await OrderService.setStatusToDelivered(orderId);
+
+            setOrders(orders.map(order =>
+                order.id === orderId
+                    ? { ...order, currentLocation: "Delivered", orderStatus: "DELIVERED" }
+                    : order
+            ));
+        } catch (error) {
+            console.error("Error marking as delivered:", error);
+        }
+    };
+
+
+    const buttonStyle: React.CSSProperties = {
+        padding: "10px 20px",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+        fontSize: "16px",
+    };
+
+    const addButtonStyle: React.CSSProperties = {
+        ...buttonStyle,
+        backgroundColor: "#13aa52",
+        color: "white",
+    };
+
+
+    const deliveredButtonStyle: React.CSSProperties = {
+        ...buttonStyle,
+        backgroundColor: "gray",
+        color: "white",
+    };
+
+    const cancelButtonStyle: React.CSSProperties = {
+        ...buttonStyle,
+        backgroundColor: "#d9534f",
+        color: "white",
+    };
+
+
     return (
         <div className="container mt-5 mb-5">
+            {showModal && (
+                <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Update Current Location</h5>
+                                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="mb-3">
+                                    <label htmlFor="locationInput" className="form-label">Current Location</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="locationInput"
+                                        value={locationInput}
+                                        onChange={(e) => setLocationInput(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    style={cancelButtonStyle}
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                   style={addButtonStyle}
+                                    onClick={handleSaveLocation}
+                                >
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="table-responsive">
-                <table className="table table-bordered ">
+                <table className="table table-bordered">
                     <thead className="table-light">
                     <tr className="text-center">
                         <th>Food</th>
@@ -75,11 +187,12 @@ const ManagerOrders = () => {
                         <th>Status</th>
                         <th>Building</th>
                         <th>Current Location</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
                     {orders.map((order) => (
-                        <tr  key={order.supplierInventory.id} className="text-center">
+                        <tr key={order.id} className="text-center">
                             <td className="align-middle"> {order.supplierInventory.food.food}</td>
                             <td className="align-middle">
                                 <img
@@ -89,13 +202,29 @@ const ManagerOrders = () => {
                                     className="img-fluid"
                                 />
                             </td>
-
                             <td className="align-middle">{order.quantity}</td>
                             <td className="align-middle">{order.totalPrice}</td>
                             <td className="align-middle"> {order.supplierInventory.supplier.username}</td>
                             <td className="align-middle">{order.orderStatus}</td>
                             <td className="align-middle">{order.building.name}</td>
-                            <td className="align-middle">{ order.currentLocation ?  order.currentLocation : "Not Shipped Yet"}</td>
+                            <td className="align-middle">{order.currentLocation ? order.currentLocation : "Not Shipped Yet"}</td>
+                            <td className="align-middle">
+                                <div className="d-flex gap-2 justify-content-center">
+                                    <button
+                                        style={addButtonStyle}
+                                        onClick={() => handleUpdateLocation(order)}
+                                    >
+                                        Update Location
+                                    </button>
+                                    <button
+                                        style={deliveredButtonStyle}
+                                        onClick={() => handleMarkAsDelivered(order.id)}
+                                        disabled={order.orderStatus === "DELIVERED"}
+                                    >
+                                        Delivered
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     ))}
                     </tbody>
