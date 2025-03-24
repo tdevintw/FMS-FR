@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import CategoryService from "../../../services/categoryService.ts";
-const AddCategory = () => {
+
+interface AddCategoryProps {
+    onAddCategory: (category: { id: string; category: string; imageUrl: string }) => void;
+}
+
+const AddCategory = ({ onAddCategory }: AddCategoryProps) => {
     const [showModal, setShowModal] = useState(false);
     const [categoryName, setCategoryName] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -20,7 +25,8 @@ const AddCategory = () => {
 
         setLoading(true);
         try {
-            await CategoryService.add(categoryName, selectedFile);
+            const newCategory = await CategoryService.add(categoryName, selectedFile);
+            onAddCategory(newCategory); // Call parent function with new category
             alert("Category added successfully!");
             setShowModal(false);
             setCategoryName("");

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import EditCategory from "./EditCategory";
 import CategoryService from "../../../services/categoryService.ts";
 
@@ -8,35 +8,21 @@ interface ICategory {
     imageUrl: string;
 }
 
-const Category = () => {
+interface CategoryProps {
+    categories: ICategory[];
+    onUpdateCategory: (category: ICategory) => void;
+    onDeleteCategory: (uuid: string) => void;
+}
+
+const Category = ({ categories, onUpdateCategory, onDeleteCategory }: CategoryProps) => {
     const [editModalOpen, setEditModalOpen] = useState(false);
-    const { getAll, remove } = CategoryService;
-    const [categories, setCategories] = useState<ICategory[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
+    const { remove } = CategoryService;
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const categoryList: ICategory[] = await getAll();
-                console.log(categoryList);
-                setCategories(categoryList);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
-
-        fetchCategories();
-    }, []);
-
-    const handleUpdateCategory = (updatedCategory: ICategory) => {
-        setCategories(categories.map(item => (item.id === updatedCategory.id ? updatedCategory : item)));
-        setEditModalOpen(false);
-    };
-
-    const handleDeleteCategory = async (uuid: string) => {
+    const handleDelete = async (uuid: string) => {
         try {
             await remove(uuid);
-            setCategories(categories.filter(category => category.id !== uuid));
+            onDeleteCategory(uuid);
         } catch (error) {
             console.error("Error deleting category:", error);
         }
@@ -45,6 +31,7 @@ const Category = () => {
     return (
         <div className="container mt-4">
             <div className="table-responsive">
+
                 <table className="table table-bordered table-hover">
                     <thead className="table-light text-center">
                     <tr>
@@ -75,7 +62,7 @@ const Category = () => {
                             <td>
                                 <img
                                     style={{ width: "2.2rem", cursor: "pointer" }}
-                                    onClick={() => handleDeleteCategory(item.id)}
+                                    onClick={() => handleDelete(item.id)}
                                     src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
                                     alt="Delete"
                                 />
@@ -90,7 +77,7 @@ const Category = () => {
                 <EditCategory
                     category={selectedCategory}
                     onClose={() => setEditModalOpen(false)}
-                    onUpdate={handleUpdateCategory}
+                    onUpdate={onUpdateCategory}
                 />
             )}
         </div>
@@ -98,3 +85,4 @@ const Category = () => {
 };
 
 export default Category;
+
