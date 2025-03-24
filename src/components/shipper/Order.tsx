@@ -184,6 +184,9 @@ const ManagerOrders = () => {
                         <th>Quantity</th>
                         <th>Total Price</th>
                         <th>Supplier</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Address</th>
                         <th>Status</th>
                         <th>Building</th>
                         <th>Current Location</th>
@@ -205,6 +208,9 @@ const ManagerOrders = () => {
                             <td className="align-middle">{order.quantity}</td>
                             <td className="align-middle">{order.totalPrice}</td>
                             <td className="align-middle"> {order.supplierInventory.supplier.username}</td>
+                            <td className="align-middle">{order.building.city.country.country}</td>
+                            <td className="align-middle">{order.building.city.city}</td>
+                            <td className="align-middle"> {order.building.address}</td>
                             <td className="align-middle">{order.orderStatus}</td>
                             <td className="align-middle">{order.building.name}</td>
                             <td className="align-middle">{order.currentLocation ? order.currentLocation : "Not Shipped Yet"}</td>

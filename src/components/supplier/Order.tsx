@@ -42,7 +42,7 @@ interface IOrder {
     supplierInventory: InventoryItem,
     building: IBuilding,
     orderStatus: string,
-    shipment: { id: string, currentLocation: string }
+    currentLocation: string ,
 }
 
 interface IShipper {
@@ -184,7 +184,7 @@ const SupplierOrders = () => {
                             <td className="align-middle"> {order.supplierInventory.supplier.username}</td>
                             <td className="align-middle">{order.orderStatus}</td>
                             <td className="align-middle">{order.building.name}</td>
-                            <td className="align-middle">{order.shipment ? order.shipment.currentLocation : "Not Shipped Yet"}</td>
+                            <td className="align-middle">{ order.currentLocation ?  order.currentLocation : "Not Shipped Yet"}</td>
                             <td className="align-middle">
                                 {order.orderStatus === "PENDING" && (
                                     <div className="d-flex gap-2 justify-content-center">

@@ -281,7 +281,7 @@ const OrderService = {
         }
 
         try {
-            const response = await axios.put("http://localhost:9999/api/orders/set-status-delivered/"+orderId ,{
+            const response = await axios.put("http://localhost:9999/api/orders/set-delivered/"+orderId ,null,{
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${user.token}`,
