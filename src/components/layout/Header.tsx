@@ -1,9 +1,26 @@
 import {Link} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.tsx";
+import userService from "../../services/userService.ts";
+import {useEffect, useState} from "react";
 
+interface IUser {
+    id : string ;
+    username : string ;
+    email : string ;
+    role : string
+}
 const Header = () => {
 
     const  {user} = useAuth() ;
+    const [userData, setUserData] = useState<IUser | null >(null);
+
+    useEffect(() => {
+        if (user) {
+            userService.getUser().then(setUserData).catch((error) => {
+                console.error("Error fetching user data:", error);
+            });
+        }
+    }, [user]);
     return (
         <header className="main-header-area">
             <div className="main-header">
@@ -34,11 +51,13 @@ const Header = () => {
                                                     </Link>
                                                 </li>
                                             )}
+                                            {user && userData &&userData.role==="MANAGER" && (
                                                 <li>
                                                     <Link to={"/order"}>
                                                         <span className="menu-text">Order</span>
                                                     </Link>
                                                 </li>
+                                            )}
 
                                             <li>
                                                 <Link to="/about" >
@@ -56,7 +75,6 @@ const Header = () => {
                                     </nav>
                                 </div>
 
-                                {/* Header Right */}
                                 <div className="col-lg-2 col-xl-3 col-sm-6 col-6 col-custom">
                                     <div className="header-right-area main-nav">
                                         <ul className="nav">
