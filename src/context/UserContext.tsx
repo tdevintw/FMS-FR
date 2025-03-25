@@ -52,7 +52,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const deleteUser = async () => {
         try {
             await UserService.deleteUser();
-            setUser(null); // Remove user from state
+            setUser(null);
         } catch (error) {
             console.error('Failed to delete user:', error);
         }

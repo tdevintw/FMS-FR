@@ -1,105 +1,110 @@
-import { useEffect, useState } from "react";
-import buildingService from "../../../services/buildingService.ts";
+import {useState} from "react";
 import EditBuilding from "./EditBuilding.tsx";
 
-interface IUser {
-    id: string,
-    username: string,
-    email: string,
-    role: string,
-}
-
-interface ICity {
-    id: string;
-    city: string;
-    country: { id: string; country: string };
-}
-
 interface IBuilding {
-    id: string,
-    name: string,
-    city: ICity,
-    buildingType: string,
-    address: string,
-    manager: IUser,
+    id: string;
+    name: string;
+    city: {
+        id: string;
+        city: string;
+        country: {
+            id: string;
+            country: string
+        };
+    };
+    buildingType: string;
+    address: string;
+    manager: {
+        id: string;
+        username: string;
+        email: string;
+        role: string;
+    };
 }
 
-const Building = () => {
-    const [buildings, setBuildings] = useState<IBuilding[]>([]);
-    const [editModalOpen, setEditModalOpen] = useState(false);
-    const [selectedBuilding, setSelectedBuilding] = useState<IBuilding | null>(null);
-    const BuildingService = buildingService;
-
-    useEffect(() => {
-        const fetchBuildings = async () => {
-            try {
-                const buildingList: IBuilding[] = await BuildingService.getAll();
-                setBuildings(buildingList);
-            } catch (error) {
-                console.error("Error fetching buildings:", error);
-            }
+interface BuildingProps {
+    buildings: IBuilding[];
+    onUpdateBuilding: (updatedBuilding: {
+        id: string;
+        name: string;
+        buildingType: string;
+        cityId: string;
+        address: string;
+        city?: {
+            id: string;
+            city: string;
+            country: {
+                id: string;
+                country: string
+            };
         };
+        country?: {
+            id: string;
+            country: string
+        };
+    }) => void;
+    onDeleteBuilding: (id: string) => void;
+    loading: boolean;
+}
 
-        fetchBuildings();
-    }, []);
-
-    const handleRemove = async (id: string) => {
-        try {
-            await BuildingService.remove(id);
-            setBuildings((prevBuildings) => prevBuildings.filter((building) => building.id !== id));
-        } catch (error) {
-            console.error("Error removing building:", error);
-        }
-    };
+const Building = ({
+                      buildings,
+                      onUpdateBuilding,
+                      onDeleteBuilding,
+                      loading
+                  }: BuildingProps) => {
+    const [selectedBuilding, setSelectedBuilding] = useState<IBuilding | null>(null);
 
     return (
         <div className="container mt-5 mb-5">
-            <div className="table-responsive">
-                <table className="table table-bordered">
-                    <thead className="table-light">
-                    <tr className="text-center">
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>City</th>
-                        <th>Address</th>
-                        <th>Edit</th>
-                        <th>Remove</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {buildings.map((building) => (
-                        <tr key={building.id} className="text-center align-middle">
-                            <td>{building.name}</td>
-                            <td>{building.buildingType}</td>
-                            <td>{building.city.city}</td>
-                            <td>{building.address}</td>
-                            <td>
-                                <img
-                                    style={{ width: "2.2rem", cursor: "pointer" }}
-                                    src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
-                                    onClick={() => {
-                                        setSelectedBuilding(building);
-                                        setEditModalOpen(true);
-                                    }}
-                                />
-                            </td>
-                            <td>
-                                <img
-                                    style={{ width: "2.2rem", cursor: "pointer" }}
-                                    src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
-                                    onClick={() => handleRemove(building.id)}
-                                />
-                            </td>
+            {loading ? (
+                <div>Loading buildings...</div>
+            ) : (
+                <div className="table-responsive">
+                    <table className="table table-bordered">
+                        <thead className="table-light">
+                        <tr className="text-center">
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>City</th>
+                            <th>Address</th>
+                            <th>Edit</th>
+                            <th>Remove</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                        {buildings.map((building) => (
+                            <tr key={building.id} className="text-center align-middle">
+                                <td>{building.name}</td>
+                                <td>{building.buildingType}</td>
+                                <td>{building.city.city}</td>
+                                <td>{building.address}</td>
+                                <td>
+                                    <img
+                                        style={{width: "2.2rem", cursor: "pointer"}}
+                                        src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
+                                        onClick={() => setSelectedBuilding(building)}
+                                    />
+                                </td>
+                                <td>
+                                    <img
+                                        style={{width: "2.2rem", cursor: "pointer"}}
+                                        src="https://cdn-icons-png.flaticon.com/128/4315/4315482.png"
+                                        onClick={() => onDeleteBuilding(building.id)}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
 
-            {editModalOpen && selectedBuilding && (
+            {selectedBuilding && (
                 <EditBuilding
                     building={selectedBuilding}
-                    onClose={() => setEditModalOpen(false)}
+                    onClose={() => setSelectedBuilding(null)}
+                    onUpdate={onUpdateBuilding}
                 />
             )}
         </div>

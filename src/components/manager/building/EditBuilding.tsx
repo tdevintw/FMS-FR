@@ -1,83 +1,103 @@
-import React, {useEffect, useState} from "react";
+
+import React, { useEffect, useState } from "react";
 import cityService from "../../../services/cityService.ts";
 import countryService from "../../../services/countryService.ts";
 import buildingService from "../../../services/buildingService.ts";
 
-interface IUser {
-    id: string;
-    username: string;
-    email: string;
-    role: string;
-}
+interface ICity{
 
-interface ICity {
     id: string;
     city: string;
-    country: { id: string; country: string };
+    country: ICountry
+
 }
 
-
-interface ICountry {
+interface ICountry{
     id: string;
     country: string
 }
+
+
+
 
 interface EditBuildingProps {
     building: {
         id: string;
         name: string;
-        city: ICity;
+        city:  ICity;
         buildingType: string;
-        manager: IUser;
-        address : string;
-
+        address: string;
     };
     onClose: () => void;
+    onUpdate: (updatedBuilding: {
+        id: string;
+        name: string;
+        buildingType: string;
+        cityId: string;
+        address: string;
+        city?: ICity;
+        country?: ICountry;
+    }) => void;
 }
 
-const EditBuilding = ({building, onClose}: EditBuildingProps) => {
-
+const EditBuilding = ({ building, onClose, onUpdate }: EditBuildingProps) => {
     const [name, setName] = useState(building.name);
-    const [address , setAddress] = useState(building.address);
+    const [address, setAddress] = useState(building.address);
     const [cityId, setCityId] = useState(building.city.id);
     const [buildingType, setBuildingType] = useState(building.buildingType);
     const [cities, setCities] = useState<ICity[]>([]);
     const [countries, setCountries] = useState<ICountry[]>([]);
     const [selectedCountry, setSelectedCountry] = useState(building.city.country.id);
-    const CityService = cityService;
-    const CountryService = countryService;
-    const BuildingService = buildingService;
-    useEffect(() => {
-        console.log("buildings : " + JSON.stringify(building));
-        const fetchCities = async () => {
-            try {
-                const cityList = await CityService.getAll();
-                setCities(cityList);
-            } catch (error) {
-                console.error("Error fetching cities:", error);
-            }
-        };
 
-        const fetchCountries = async () => {
+    useEffect(() => {
+        const fetchData = async () => {
             try {
-                const countryList = await CountryService.getAll();
+                const [cityList, countryList] = await Promise.all([
+                    cityService.getAll(),
+                    countryService.getAll()
+                ]);
+                setCities(cityList);
                 setCountries(countryList);
             } catch (error) {
-                console.error("Error fetching countries:", error);
+                console.error("Error fetching data:", error);
             }
         };
-
-        fetchCountries();
-        fetchCities();
+        fetchData();
     }, []);
 
-
     const handleSaveChanges = async () => {
-        await BuildingService.edit({id: building.id, name: name, buildingType: buildingType, cityId: cityId , address : address});
-        onClose();
+        if (!name.trim() || !address.trim() || !buildingType.trim() || !cityId) {
+            return;
+        }
+
+
+        try {
+            await buildingService.edit({
+                id: building.id,
+                name,
+                buildingType,
+                cityId,
+                address
+            });
+
+            const selectedCity = cities.find(city => city.id === cityId);
+            const selectedCountry = countries.find(country => country.id === selectedCity?.country.id);
+
+            onUpdate({
+                id: building.id,
+                name,
+                buildingType,
+                cityId,
+                address,
+                city: selectedCity || building.city,
+                country: selectedCountry || building.city.country
+            });
+
+            onClose();
+        } catch (error) {
+            console.error("Error updating building:", error);
+        }
     };
-
-
 
 
     return (

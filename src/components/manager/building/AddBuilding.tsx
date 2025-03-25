@@ -1,23 +1,39 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import cityService from "../../../services/cityService.ts";
 import countryService from "../../../services/countryService.ts";
-import BuildingService from "../../../services/buildingService.ts";
+import buildingService from "../../../services/buildingService.ts";
 
+interface ICity{
 
-
-interface ICity {
     id: string;
     city: string;
-    country: { id: string; country: string };
+    country: ICountry
+
 }
 
-
-interface ICountry {
+interface ICountry{
     id: string;
     country: string
 }
 
-const AddBuilding = () => {
+
+interface AddBuildingProps {
+    onAddBuilding: (building: {
+        id: string;
+        name: string;
+        city: ICity;
+        buildingType: string;
+        address: string;
+        manager: {
+            id: string;
+            username: string;
+            email: string;
+            role: string;
+        };
+    }) => void;
+}
+
+const AddBuilding = ({ onAddBuilding }: AddBuildingProps) => {
     const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
@@ -26,51 +42,54 @@ const AddBuilding = () => {
     const [cities, setCities] = useState<ICity[]>([]);
     const [countries, setCountries] = useState<ICountry[]>([]);
     const [selectedCountry, setSelectedCountry] = useState("");
-    const CityService = cityService;
-    const CountryService = countryService;
 
     useEffect(() => {
-        const fetchCities = async () => {
+        const fetchData = async () => {
             try {
-                const cityList = await CityService.getAll();
+                const [cityList, countryList] = await Promise.all([
+                    cityService.getAll(),
+                    countryService.getAll()
+                ]);
                 setCities(cityList);
-            } catch (error) {
-                console.error("Error fetching cities:", error);
-            }
-        };
-
-        const fetchCountries = async () => {
-            try {
-                const countryList = await CountryService.getAll();
                 setCountries(countryList);
             } catch (error) {
-                console.error("Error fetching countries:", error);
+                console.error("Error fetching data:", error);
             }
         };
-
-        fetchCountries();
-        fetchCities();
+        fetchData();
     }, []);
-
 
     const filteredCities = selectedCountry
         ? cities.filter((city) => city.country.id === selectedCountry)
         : [];
 
-    const handleAddInventory = async () => {
+    const handleAddBuilding = async () => {
         if (!cityId.trim() || !buildingType.trim() || !name.trim() || !address.trim()) {
-            alert("All fields are required and price must be positive.");
             return;
         }
 
+
         try {
-            await BuildingService.add(name, buildingType, cityId , address);
+            const response = await buildingService.add(name, buildingType, cityId, address);
+            const selectedCity = cities.find(city => city.id === cityId);
+
+            if (selectedCity) {
+                onAddBuilding({
+                    ...response,
+                    city: selectedCity
+                });
+            }
+
             setShowModal(false);
+            setName("");
+            setAddress("");
+            setCityId("");
+            setBuildingType("");
+            setSelectedCountry("");
         } catch (error) {
-            console.error("Error adding inventory:", error);
+            console.error("Error adding building:", error);
         }
     };
-
 
     const modalOverlayStyle: React.CSSProperties = {
         position: "fixed",
@@ -244,7 +263,7 @@ const AddBuilding = () => {
 
 
                         <div style={actionsStyle}>
-                            <button style={addButtonStyle} onClick={handleAddInventory}>Add</button>
+                            <button style={addButtonStyle} onClick={handleAddBuilding}>Add</button>
                             <button style={cancelButtonStyle} onClick={() => setShowModal(false)}>Cancel</button>
                         </div>
                     </div>

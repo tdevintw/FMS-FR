@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:9999/api/auth/'; // Replace with your actual backend URL
+const API_URL = 'http://localhost:9999/api/auth/';
 
 interface RegisterData {
     username: string;

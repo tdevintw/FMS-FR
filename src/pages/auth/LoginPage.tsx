@@ -1,5 +1,4 @@
 
-// Layout components
 import Header from '../../components/layout/Header.tsx';
 import Footer from '../../components/layout/Footer.tsx';
 import {AuthHeader} from "../../components/auth/AuthHeader.tsx";
