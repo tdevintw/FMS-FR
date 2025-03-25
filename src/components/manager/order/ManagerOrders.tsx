@@ -95,7 +95,7 @@ const ManagerOrders = () => {
                             <td className="align-middle"> {order.supplierInventory.supplier.username}</td>
                             <td className="align-middle">{order.orderStatus}</td>
                             <td className="align-middle">{order.building.name}</td>
-                            <td className="align-middle">{ order.currentLocation ?  order.currentLocation : "Not Shipped Yet"}</td>
+                            <td className="align-middle">{ order.currentLocation ?  order.currentLocation  : order.orderStatus!="PENDING" ?  order.orderStatus: "Not Shipped Yet"}</td>
                         </tr>
                     ))}
                     </tbody>

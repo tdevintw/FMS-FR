@@ -213,9 +213,9 @@ const ManagerOrders = () => {
                             <td className="align-middle"> {order.building.address}</td>
                             <td className="align-middle">{order.orderStatus}</td>
                             <td className="align-middle">{order.building.name}</td>
-                            <td className="align-middle">{order.currentLocation ? order.currentLocation : "Not Shipped Yet"}</td>
+                            <td className="align-middle">{ order.currentLocation ?  order.currentLocation  : order.orderStatus!="PENDING" ?  order.orderStatus: "Not Shipped Yet"}</td>
                             <td className="align-middle">
-                                {order.orderStatus === "PENDING" && (
+                                {order.orderStatus != "DELIVERED" && order.orderStatus != "REFUSED" && (
                                     <div className="d-flex gap-2 justify-content-center">
                                         <button
                                             style={addButtonStyle}
@@ -241,11 +241,6 @@ const ManagerOrders = () => {
                                 {order.orderStatus === "REFUSED" && (
                                     <div className="d-flex gap-2 justify-content-center">
                                         Order REFUSED
-                                    </div>
-                                )}
-                                {order.orderStatus === "IN_DELIVERY" && (
-                                    <div className="d-flex gap-2 justify-content-center">
-                                        Order IN_DELIVERY
                                     </div>
                                 )}
                             </td>
