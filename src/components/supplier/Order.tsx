@@ -205,9 +205,19 @@ const SupplierOrders = () => {
                                         </button>
                                     </div>
                                 )}
-                                {order.orderStatus != "PENDING" && (
+                                {order.orderStatus === "DELIVERED" && (
                                     <div className="d-flex gap-2 justify-content-center">
-                                        Order was assigned or rejected
+                                        Order DELIVERED
+                                    </div>
+                                )}
+                                {order.orderStatus === "REFUSED" && (
+                                    <div className="d-flex gap-2 justify-content-center">
+                                        Order REFUSED
+                                    </div>
+                                )}
+                                {order.orderStatus === "IN_DELIVERY" && (
+                                    <div className="d-flex gap-2 justify-content-center">
+                                        Order IN_DELIVERY
                                     </div>
                                 )}
 
